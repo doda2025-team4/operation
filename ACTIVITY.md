@@ -8,6 +8,9 @@
 - Noky:
   - Attended the first meeting where we started with the assignment and divided the tasks
 
+- Andrea:
+  - Attended first meeting
+
 ### Week Q2.2 (Apr 17+)
 
 - Kasper: 
@@ -18,3 +21,6 @@
 - Noky:
   - Created the dockerfile for the model-service [PR1](https://github.com/doda2025-team4/model-service/pull/1/)
   - Created the dockerfile for the app [PR5](https://github.com/doda2025-team4/app/pull/5)
+
+- Andrea:
+  - Created docker-compose and README in operation repository
