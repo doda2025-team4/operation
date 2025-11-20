@@ -23,4 +23,4 @@
   - Created the dockerfile for the app [PR5](https://github.com/doda2025-team4/app/pull/5)
 
 - Andrea:
-  - Created docker-compose and README in operation repository
+  - Created docker-compose and README in operation repository [PR2](https://github.com/doda2025-team4/operation/pull/2)
