@@ -11,6 +11,9 @@
 - Andrea:
   - Attended first meeting
 
+- Poyraz:
+  - Checked out the assignment
+
 ### Week Q2.2 (Apr 17+)
 
 - Kasper: 
@@ -24,3 +27,8 @@
 
 - Andrea:
   - Created docker-compose and README in operation repository [PR2](https://github.com/doda2025-team4/operation/pull/2)
+
+- Poyraz:
+  - Adjusted the dockerfile and source code for the model-service to incorprate env variables [PR2] (https://github.com/doda2025-team4/model-service/pull/2)
+  - Adjusted the dockerfile for the app to incorprate env variables [PR6] (https://github.com/doda2025-team4/app/pull/6)
+  - Added .env file and adjusted the docker-compose file to incorprate env variables [PR3] (https://github.com/doda2025-team4/operation/pull/3)
