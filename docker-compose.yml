@@ -8,11 +8,13 @@ services:
       MODEL_URL: "http://model-service:8081" 
     depends_on:
       - model-service
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
   model-service:
     image: ghcr.io/doda2025-team4/model-service:latest
     container_name: model-service
-    volumes:
-      - ./model:/app/model   
+    #volumes: Needed for F10
+    #  - ./model:/app/model   
     restart: unless-stopped
