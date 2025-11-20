@@ -5,16 +5,19 @@ services:
     image: ghcr.io/doda2025-team4/app:latest
     container_name: app-service     
     environment:
-      MODEL_URL: "http://model-service:8081" 
+      SERVER_PORT: ${SERVER_PORT}
+      MODEL_HOST: ${MODEL_HOST}
     depends_on:
       - model-service
     ports:
-      - "8080:8080"
+      - "${HOST_APP_PORT}:${SERVER_PORT}"
     restart: unless-stopped
 
   model-service:
     image: ghcr.io/doda2025-team4/model-service:latest
     container_name: model-service
+    environment:
+      MODEL_SERVICE_PORT: ${MODEL_SERVICE_PORT}
     #volumes: Needed for F10
     #  - ./model:/app/model   
     restart: unless-stopped
