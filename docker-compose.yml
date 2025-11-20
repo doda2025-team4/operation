@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  app-service:
+    image: ghcr.io/doda2025-team4/app:latest
+    container_name: app-service     
+    environment:
+      MODEL_URL: "http://model-service:8081" 
+    depends_on:
+      - model-service
+    restart: unless-stopped
+
+  model-service:
+    image: ghcr.io/doda2025-team4/model-service:latest
+    container_name: model-service
+    volumes:
+      - ./model:/app/model   
+    restart: unless-stopped
