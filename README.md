@@ -14,4 +14,40 @@ To start the stack (once components are ready):
 
 ```bash
 docker compose up
+```
+
+## Features Overview
+
+- **F1 – Version-aware Library**  
+ See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
+
+- **F2 – Library Release Workflow**  
+  See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
+
+- **F3 – Containerization of App & Model**  
+  Can be found in Dockerfiles of `app/Dockerfile` and `model-service/Dockerfile`.
+
+- **F4 – Multi-architecture Container Images**  
+  Implemented in build workflows under `.github/workflows/release-image.yml` of each service.
+
+- **F5 – Multi-stage Dockerfile**  
+    Can be found in Dockerfiles of `app/Dockerfile` and `model-service/Dockerfile`.
+
+- **F6 – Flexible Containers (ENV-configurable)**  
+  Implemented with `operation/.env` and `operation/docker-compose.yml`
+
+- **F7 – Docker Compose Operation**  
+  Implemented in `operation/docker-compose.yml`.
+
+- **F8 – Automated Container Image Releases**  
+  Implemented in workflows under  `.github/workflows/auto-version.yml` of each service.
+
+- **F9 – Automated Model Training & Release**  
+  Implemented in workflows under  `.github/workflows/train-release-model.yml` of model service
+
+- **F10 – No Hard-coded Model in Model-Service**  
+  Not implemented.
+
+- **F11 – lib-version Pre-release Automation**  
+  See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
 
