@@ -17,6 +17,9 @@
 - Mohammed:
   - Attended first meeting
 
+- Joshua:
+  - Divided assignments and took F8 and F9
+
 ### Week Q2.2 (Apr 17+)
 
 - Kasper: 
@@ -40,4 +43,6 @@
   - Implemented F10 in `model-service` so the model is loaded from a `/models` volume or, if missing, downloaded once from a GitHub release URL [PR3] (https://github.com/doda2025-team4/model-service/pull/3)
   - Updated `operation`'s `docker-compose.yml` so `model-service` uses the `/models` volume with `MODEL_DIR`, `MODEL_FILE` and `MODEL_URL` environment variables [PR4] (https://github.com/doda2025-team4/operation/pull/4)
 
-
+- Joshua:
+  - Implemented F8 in `app` and `model-service` by creating workflows for automated container image builds and releases using automatic semantic versioning and multi-arch Docker image publishing
+  - Implemented F9 in `model-service` by creating a workflow for training, versioning, and releasing new models
