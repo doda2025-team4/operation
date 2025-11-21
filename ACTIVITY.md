@@ -35,13 +35,13 @@
   - Created docker-compose and README in operation repository [PR2](https://github.com/doda2025-team4/operation/pull/2)
 
 - Poyraz:
-  - Adjusted the dockerfile and source code for the model-service to incorprate env variables [PR2] (https://github.com/doda2025-team4/model-service/pull/2)
-  - Adjusted the dockerfile for the app to incorprate env variables [PR6] (https://github.com/doda2025-team4/app/pull/6)
-  - Added .env file and adjusted the docker-compose file to incorprate env variables [PR3] (https://github.com/doda2025-team4/operation/pull/3)
+  - Adjusted the dockerfile and source code for the model-service to incorprate env variables [PR2](https://github.com/doda2025-team4/model-service/pull/2)
+  - Adjusted the dockerfile for the app to incorprate env variables [PR6](https://github.com/doda2025-team4/app/pull/6)
+  - Added .env file and adjusted the docker-compose file to incorprate env variables [PR3](https://github.com/doda2025-team4/operation/pull/3)
 
 - Mohammed:
-  - Implemented F10 in `model-service` so the model is loaded from a `/models` volume or, if missing, downloaded once from a GitHub release URL [PR3] (https://github.com/doda2025-team4/model-service/pull/3)
-  - Updated `operation`'s `docker-compose.yml` so `model-service` uses the `/models` volume with `MODEL_DIR`, `MODEL_FILE` and `MODEL_URL` environment variables [PR4] (https://github.com/doda2025-team4/operation/pull/4)
+  - Implemented F10 in `model-service` so the model is loaded from a `/models` volume or, if missing, downloaded once from a GitHub release URL [PR3](https://github.com/doda2025-team4/model-service/pull/3)
+  - Updated `operation`'s `docker-compose.yml` so `model-service` uses the `/models` volume with `MODEL_DIR`, `MODEL_FILE` and `MODEL_URL` environment variables [PR4](https://github.com/doda2025-team4/operation/pull/4)
 
 - Joshua:
   - Implemented F8 in `app` and `model-service` by creating workflows for automated container image builds and releases using automatic semantic versioning and multi-arch Docker image publishing
