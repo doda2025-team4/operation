@@ -1,4 +1,78 @@
 ---
 - hosts: ctrl
   become: yes
-  tasks: []
+  tasks:
+    # Step 13 – check if kubeadm has already initialized the cluster
+    - name: Check if Kubernetes admin.conf exists
+      ansible.builtin.stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubeadmin_conf
+
+    - name: Initialize Kubernetes cluster with kubeadm
+      ansible.builtin.command: >
+        kubeadm init
+        --apiserver-advertise-address=192.168.56.100
+        --node-name ctrl
+        --pod-network-cidr=10.244.0.0/16
+        --ignore-preflight-errors=NumCPU
+      when: not kubeadmin_conf.stat.exists
+
+    # Refresh status so later steps see the freshly created file
+    - name: Refresh admin.conf status
+      ansible.builtin.stat:
+        path: /etc/kubernetes/admin.conf
+      register: adminconf
+
+    # Step 14: Setup kubectl
+    - name: Create .kube directory for vagrant
+      ansible.builtin.file:
+        path: /home/vagrant/.kube
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+      when: adminconf.stat.exists
+
+    - name: Copy admin.conf to vagrant kube config
+      ansible.builtin.copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/vagrant/.kube/config
+        remote_src: yes
+        owner: vagrant
+        group: vagrant
+        mode: '0600'
+      when: adminconf.stat.exists
+
+    - name: Copy admin.conf to host folder
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: ../admin.conf
+        flat: yes
+      when: adminconf.stat.exists
+
+    # Step 15: Install Flannel CNI
+    # Copy the local Flannel manifest into the controller VM
+    - name: Copy Flannel manifest to controller
+      ansible.builtin.copy:
+        src: kube-flannel.yml
+        dest: /home/vagrant/kube-flannel.yml
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+      when: adminconf.stat.exists
+
+    # Ensure flannel DaemonSet uses eth1 as interface (host-only network)
+    - name: Ensure flannel uses eth1 interface
+      ansible.builtin.lineinfile:
+        path: /home/vagrant/kube-flannel.yml
+        line: '          - --iface=eth1'
+        insertafter: '^\s*- --kube-subnet-mgr'
+        state: present
+      when: adminconf.stat.exists
+
+    # Apply the Flannel manifest
+    - name: Apply Flannel CNI
+      ansible.builtin.command: >
+        kubectl apply -f /home/vagrant/kube-flannel.yml
+        --kubeconfig=/etc/kubernetes/admin.conf
+      when: adminconf.stat.exists
