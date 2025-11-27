@@ -16,7 +16,15 @@ To start the stack (once components are ready):
 docker compose up
 ```
 
+To start the cluster:
+
+```bash
+vagrant up
+```
+
 ## Features Overview
+
+### A1
 
 - **F1 – Version-aware Library**  
  See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
@@ -51,3 +59,53 @@ docker compose up
 - **F11 – lib-version Pre-release Automation**  
   See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
 
+### A2
+- **Step 1 - Create VMs**  
+  Created VMs `ctrl`, `node-1`, `node-2` with bento/ubuntu-24.04 in Vagrantfile.  
+  Verification: `vagrant status`
+
+- **Step 2 - Networking**  
+  Configured private network NICs with fixed IPs in Vagrantfile.  
+  Verification:  
+  `vagrant ssh ctrl -c "ip addr show | grep 192.168.56"`  
+  `vagrant ssh node-1 -c "ip addr show | grep 192.168.56"`
+
+- **Step 3 - Provision with Ansible**  
+  Added Ansible provisioners for general setup and node/controller-specific playbooks in Vagrantfile.  
+  Verification: `vagrant provision`
+
+- **Step 4 - Register SSH Keys**  
+  Added "Add team SSH keys" task to `general.yaml` and added "Add team SSH keys" task to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "cat ~/.ssh/authorized_keys"` shows public keys.
+
+- **Step 5 - Disable SWAP**  
+  Added "Disable swap at runtime" and "Remove swap from /etc/fstab" tasks to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "swapon --show"` shows nothing.
+
+- **Step 6 - br_netfilter**  
+  Added "Create modules-load config" and "Load br_netfilter" tasks to `general.yaml`.  
+  Verification: `lsmod | grep br_netfilter`.
+
+- **Step 7 - Enable IPv4 forwarding**  
+  Added "Enable net.ipv4.ip_forward", "Enable bridged IPv4 forwarding", and "Enable bridged IPv6 forwarding" tasks to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "sysctl net.ipv4.ip_forward net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables"`
+
+- **Step 8 - Manage /etc/hosts**  
+  Added "Generate /etc/hosts dynamically" task to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "cat /etc/hosts"`
+
+- **Step 9 - Add Kubernetes repository**  
+  Added "Add Kubernetes apt key", "Add Kubernetes apt repository", and "Update apt" tasks to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "apt-cache policy kubeadm"`
+
+- **Step 10 - Install K8s tools**  
+  Added "Install required packages" task to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "dpkg -l | grep kubeadm"`
+
+- **Step 11 - Configure containerd**  
+  Added "Ensure containerd config directory exists", "Generate default containerd config", "Disable AppArmor in containerd", "Set sandbox image", "Enable SystemdCgroup", and "Restart containerd" tasks to `general.yaml`.  
+  Verification: and `systemctl status containerd`
+
+- **Step 12 - Kubelet**  
+  Added "Enable kubelet" task to `general.yaml`.  
+  Verification: `vagrant ssh ctrl -c "systemctl status kubelet"`
