@@ -91,7 +91,7 @@ vagrant up
   Verification: `vagrant ssh ctrl -c "sysctl net.ipv4.ip_forward net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables"`
 
 - **Step 8 - Manage /etc/hosts**  
-  Added "Copy hosts" task to `general.yaml`.  
+  Added "Generate /etc/hosts dynamically" task to `general.yaml`.  
   Verification: `vagrant ssh ctrl -c "cat /etc/hosts"`
 
 - **Step 9 - Add Kubernetes repository**  

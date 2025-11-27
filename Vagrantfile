@@ -1,52 +1,47 @@
 # Step 1
-WORKER_COUNT = ENV.fetch("WORKERS", 2).to_i
+WORKER_COUNT = 2
+CTRL_CPUS    = 1
+CTRL_MEMORY  = 4096
+WORKER_CPUS  = 2
+WORKER_MEMORY = 6144
 
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
 
   # Controller VM
   config.vm.define "ctrl" do |ctrl|
-    # Step 2
     ctrl.vm.hostname = "ctrl"
     ctrl.vm.network "private_network", ip: "192.168.56.100"
 
     ctrl.vm.provider "virtualbox" do |vb|
-      vb.memory = 4096
-      vb.cpus   = 1
-    end
-
-    # Step 3
-    ctrl.vm.provision "ansible_local" do |ansible|
-      ansible.playbook = "ansible/general.yaml"
-      ansible.extra_vars = { hostname: "ctrl" }
-    end
-
-    ctrl.vm.provision "ansible_local" do |ansible|
-      ansible.playbook = "ansible/ctrl.yaml"
+      vb.memory = CTRL_MEMORY
+      vb.cpus   = CTRL_CPUS
     end
   end
 
   # Worker VMs
   (1..WORKER_COUNT).each do |i|
     config.vm.define "node-#{i}" do |node|
-      # Step 2
       node.vm.hostname = "node-#{i}"
       node.vm.network "private_network", ip: "192.168.56.#{100 + i}"
 
       node.vm.provider "virtualbox" do |vb|
-        vb.memory = 6144
-        vb.cpus   = 2
-      end
-
-      # Step 3
-      node.vm.provision "ansible_local" do |ansible|
-        ansible.playbook = "ansible/general.yaml"
-        ansible.extra_vars = { hostname: "node-#{i}" }
-      end
-
-      node.vm.provision "ansible_local" do |ansible|
-        ansible.playbook = "ansible/node.yaml"
+        vb.memory = WORKER_MEMORY
+        vb.cpus   = WORKER_CPUS
       end
     end
   end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook       = "ansible/main.yml"
+    ansible.groups = {
+    "ctrl"  => ["ctrl"],
+    "nodes" => (1..WORKER_COUNT).map { |i| "node-#{i}" }
+    }
+    ansible.extra_vars = {
+      worker_count: WORKER_COUNT
+    }
+  end
+  
 end
