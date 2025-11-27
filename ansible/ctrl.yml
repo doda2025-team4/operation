@@ -1,4 +1,29 @@
 ---
 - hosts: ctrl
   become: yes
-  tasks: []
+  tasks:
+    - name: Add Helm apt key
+      ansible.builtin.apt_key:
+        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+
+    - name: Add Helm apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - helm
+
+    - name: Check if helm-diff plugin is already installed
+      ansible.builtin.command: helm plugin list
+      register: helm_plugins
+      changed_when: false
+
+    - name: Install helm diff plugin
+      ansible.builtin.command: helm plugin install https://github.com/databus23/helm-diff
+      when: "'diff' not in helm_plugins.stdout"
