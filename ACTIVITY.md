@@ -52,3 +52,6 @@
 - Kasper: 
   - In `operation`: [PR 11](https://github.com/doda2025-team4/operation/pull/11).
   - I have worked on A2 by trying to implement the solution to step 18 and step 19. I did not succeed to make it work because of networking issues.
+
+- Noky:
+  - I have worked on A2 by implementing step 16 and step 17. [PR11](https://github.com/doda2025-team4/operation/pull/10)
