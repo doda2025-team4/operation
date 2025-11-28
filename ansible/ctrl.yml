@@ -74,9 +74,12 @@
         --kubeconfig=/etc/kubernetes/admin.conf
       when: adminconf.stat.exists
 
-    - name: Wait for Flannel to become ready
+    - name: Wait for Flannel daemonset to exist
       ansible.builtin.command: >
         kubectl --kubeconfig=/etc/kubernetes/admin.conf
-        wait --for=condition=ready pod
-        -n kube-flannel -l app=flannel --timeout=60s
+        get daemonset kube-flannel-ds -n kube-flannel
+      register: flannel_ds_check
+      retries: 10
+      delay: 1
+      until: flannel_ds_check.rc == 0
       when: adminconf.stat.exists
