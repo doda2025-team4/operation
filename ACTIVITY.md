@@ -58,6 +58,10 @@
 
 - Poyraz:
   - I have worked on A2 by implementing step 13, 14, and 15. [PR9] (https://github.com/doda2025-team4/operation/pull/9)
+  
+- Mohammed:
+  - I have worked on A2 by implementing step 20. [PR 15](https://github.com/doda2025-team4/operation/pull/15)
 
 - Andrea:
  - I have worked on A2 by fixing the issues encountered in several steps in [PR 8](https://github.com/doda2025-team4/operation/pull/8), [PR 16](https://github.com/doda2025-team4/operation/pull/16), helped in general with reviews in Pull Requests.
+

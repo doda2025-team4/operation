@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure MetalLB directory exists on controller
+      file:
+        path: /home/vagrant/metallb
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+
+    - name: Copy MetalLB main manifest to controller
+      copy:
+        src: ../k8s/metallb/metallb-native-0.14.9.yml
+        dest: /home/vagrant/metallb/metallb-native-0.14.9.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply MetalLB CRDs and components
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/metallb-native-0.14.9.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+    
+    - name: Wait for MetalLB controller to be ready
+      become_user: vagrant
+      command: >
+        kubectl wait -n metallb-system
+        -l app=metallb,component=controller
+        --for=condition=ready pod
+        --timeout=120s
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      changed_when: false
+
+    - name: Copy MetalLB IPAddressPool manifest
+      copy:
+        src: ../k8s/metallb/ipaddresspool.yml
+        dest: /home/vagrant/metallb/ipaddresspool.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Copy MetalLB L2Advertisement manifest
+      copy:
+        src: ../k8s/metallb/l2advertisement.yml
+        dest: /home/vagrant/metallb/l2advertisement.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply MetalLB IPAddressPool
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/ipaddresspool.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Apply MetalLB L2Advertisement
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/l2advertisement.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
