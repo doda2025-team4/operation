@@ -51,7 +51,6 @@
       when: adminconf.stat.exists
 
     # Step 15: Install Flannel CNI
-    # Copy the local Flannel manifest into the controller VM
     - name: Copy Flannel manifest to controller
       ansible.builtin.copy:
         src: kube-flannel.yml
@@ -61,18 +60,23 @@
         mode: '0644'
       when: adminconf.stat.exists
 
-    # Ensure flannel DaemonSet uses eth1 as interface (host-only network)
     - name: Ensure flannel uses eth1 interface
       ansible.builtin.lineinfile:
         path: /home/vagrant/kube-flannel.yml
-        line: '          - --iface=eth1'
+        line: '        - --iface=eth1'
         insertafter: '^\s*- --kube-subnet-mgr'
         state: present
       when: adminconf.stat.exists
 
-    # Apply the Flannel manifest
     - name: Apply Flannel CNI
       ansible.builtin.command: >
         kubectl apply -f /home/vagrant/kube-flannel.yml
         --kubeconfig=/etc/kubernetes/admin.conf
+      when: adminconf.stat.exists
+
+    - name: Wait for Flannel to become ready
+      ansible.builtin.command: >
+        kubectl --kubeconfig=/etc/kubernetes/admin.conf
+        wait --for=condition=ready pod
+        -n kube-flannel -l app=flannel --timeout=60s
       when: adminconf.stat.exists
