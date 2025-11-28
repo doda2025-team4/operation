@@ -24,6 +24,17 @@
       command: kubectl apply -f /home/vagrant/metallb/metallb-native-0.14.9.yml
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
+    
+    - name: Wait for MetalLB controller to be ready
+      become_user: vagrant
+      command: >
+        kubectl wait -n metallb-system
+        -l app=metallb,component=controller
+        --for=condition=ready pod
+        --timeout=120s
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      changed_when: false
 
     - name: Copy MetalLB IPAddressPool manifest
       copy:
@@ -41,20 +52,14 @@
         group: vagrant
         mode: "0644"
 
-    - name: Apply MetalLB IPAddressPool and L2Advertisement
+    - name: Apply MetalLB IPAddressPool
       become_user: vagrant
-      shell: |
-        kubectl apply -f /home/vagrant/metallb/ipaddresspool.yml
-        kubectl apply -f /home/vagrant/metallb/l2advertisement.yml
+      command: kubectl apply -f /home/vagrant/metallb/ipaddresspool.yml
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
 
-    - name: Wait for MetalLB controller to be ready
+    - name: Apply MetalLB L2Advertisement
       become_user: vagrant
-      command: >
-        kubectl wait -n metallb-system
-        -l app=metallb,component=controller
-        --for=condition=ready pod
-        --timeout=120s
+      command: kubectl apply -f /home/vagrant/metallb/l2advertisement.yml
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
