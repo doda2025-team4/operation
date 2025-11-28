@@ -20,7 +20,7 @@
 - Joshua:
   - Divided assignments and took F8 and F9
 
-### Week Q2.2 (Apr 17+)
+### Week Q2.2 (Nov 17+)
 
 - Kasper: 
   - In `lib-version`: [PR 23](https://github.com/doda2025-team4/lib-version/pull/1) up to and including [PR 25](https://github.com/doda2025-team4/lib-version/pull/22).
@@ -46,3 +46,12 @@
 - Joshua:
   - Implemented F8 in `app` and `model-service` by creating workflows for automated container image builds and releases using automatic semantic versioning and multi-arch Docker image publishing
   - Implemented F9 in `model-service` by creating a workflow for training, versioning, and releasing new models
+
+### Week Q2.3 (Nov 24+)
+
+- Kasper: 
+  - In `operation`: [PR 11](https://github.com/doda2025-team4/operation/pull/11).
+  - I have worked on A2 by trying to implement the solution to step 18 and step 19. I did not succeed to make it work because of networking issues.
+
+- Noky:
+  - I have worked on A2 by implementing step 16 and step 17. [PR11](https://github.com/doda2025-team4/operation/pull/10)
