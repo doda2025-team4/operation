@@ -109,3 +109,46 @@ vagrant up
 - **Step 12 - Kubelet**  
   Added "Enable kubelet" task to `general.yaml`.  
   Verification: `vagrant ssh ctrl -c "systemctl status kubelet"`
+
+- **Step 13 - Initialize Kubernetes Cluster (kubeadm init)**  
+  Implemented in `ctrl.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get nodes"`
+
+- **Step 14 - Setup kubectl Configuration**  
+  Implemented in `ctrl.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get pods -A"`
+
+- **Step 15 - Install Flannel CNI**  
+  Implemented in `ctrl.yaml`.
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get pods -n kube-flannel"`
+  
+  `vagrant ssh ctrl -c "kubectl get daemonset kube-flannel-ds -n kube-flannel"`
+
+- **Step 16 – Install Helm**  
+  Implemented in `ctrl.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "helm version"`
+
+- **Step 17 – Install Helm Diff Plugin**  
+  Implemented in `ctrl.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "helm plugin list"`
+
+- **Step 18 – Generate Join Command for Workers**  
+  Implemented in `node.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "kubeadm token create --print-join-command"`
+
+- **Step 19 – Worker Node Join**  
+  Implemented in `node.yaml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get nodes"`
+
+- **Step 20 – Install MetalLB**  
+  Implemented in `finalization.yml`.  
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get pods -n metallb-system"`  
+  `vagrant ssh ctrl -c "kubectl get ipaddresspools.metallb.io -n metallb-system"`
