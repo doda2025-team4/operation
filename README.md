@@ -146,6 +146,7 @@ vagrant up
   Implemented in `node.yaml`.  
   Verification:  
   `vagrant ssh ctrl -c "kubectl get nodes"`
+  Note: This did not initially work due to a conflicting IPv4 address with the VirtualBox DHCP Server. [This](https://stackoverflow.com/questions/70675062/vagrant-with-virtualbox-does-not-start-because-of-standard-dhcp-vboxnet0-on-ub) is the source of the solution.
 
 - **Step 20 – Install MetalLB**  
   Implemented in `finalization.yml`.  
