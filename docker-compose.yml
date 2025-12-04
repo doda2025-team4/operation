@@ -2,8 +2,6 @@ version: "3.9"
 
 services:
   app-service:
-    build:
-      context: ../app
     image: ghcr.io/doda2025-team4/app:latest
     container_name: app-service     
     environment:
@@ -16,8 +14,6 @@ services:
     restart: unless-stopped
 
   model-service:
-    build:
-      context: ../model-service
     image: ghcr.io/doda2025-team4/model-service:latest
     container_name: model-service
     environment:
@@ -26,7 +22,7 @@ services:
       MODEL_FILE: model.joblib
       MODEL_URL: https://github.com/doda2025-team4/model-service/releases/download/model-20251121-132231/model.joblib
     volumes:
-      - ./model-storage:/models:z
+      - ./model-storage:/models:Z
     ports:
       - "8081:8081"
     restart: unless-stopped
