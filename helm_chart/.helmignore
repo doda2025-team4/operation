@@ -1,0 +1,16 @@
+# Exclude version control directories
+.git/
+.gitignore
+
+# Editor settings
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+
+# Backup files
+*.swp
+*.bak
+*.tmp
+

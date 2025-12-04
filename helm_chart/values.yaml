@@ -1,0 +1,32 @@
+app:
+  image:
+    repository: ghcr.io/doda2025-team4/app
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  env:
+    serverPort: 8080
+    modelHost: "http://model-service:8081"
+  service:
+    type: ClusterIP
+    port: 80
+
+model:
+  image:
+    repository: ghcr.io/doda2025-team4/model-service
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  env:
+    port: 8081
+  service:
+    type: ClusterIP
+    port: 8081
+
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: "CHANGE-ME.example.com"
+      path: /
+  tls: []
