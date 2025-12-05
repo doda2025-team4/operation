@@ -39,3 +39,5 @@ alerting:
     password: "REPLACE_THIS"
     from: "placeholder@tempmail.com"
     to: "placeholder@tempmail.com"
+monitoring:
+  enabled: true
