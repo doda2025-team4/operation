@@ -29,3 +29,6 @@ ingress:
     - host: "CHANGE-ME.example.com"
       path: /
   tls: []
+
+monitoring:
+  enabled: true

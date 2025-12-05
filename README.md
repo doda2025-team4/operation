@@ -181,3 +181,39 @@ vagrant up
   `vagrant ssh ctrl -c "kubectl get pods -n istio-system"`  
   `vagrant ssh ctrl -c "kubectl get svc -n istio-system"`  
   `vagrant ssh ctrl -c "istioctl version"`
+
+### A3
+
+#### Monitoring
+
+The monitoring with Prometheus can be verified by:
+
+- Start Minikube:
+  - `minikube start --memory=6144 --cpus=4` (reduce if needed)
+  - `minikube addons enable ingress`
+
+- Install the Helm chart:
+  - `cd helm_chart`
+  - `helm dependency update .`
+  - `kubectl create namespace doda`
+  - `helm install sms-app . -n doda`
+
+- Check pods:
+  - `kubectl get pods -n doda`
+
+- Port-forward the app and generate metrics:
+  - `kubectl port-forward svc/app-service 8080:8080 -n doda`
+  - `curl -X POST http://localhost:8080/sms \
+     -H "Content-Type: application/json" \
+     -d '{"sms":"hello"}'`
+  - (repeat the request a few times to increase counters)
+
+- Port-forward Prometheus:
+  - `kubectl port-forward svc/prometheus-sms-app-monitoring-prometheus 9090:9090 -n doda`
+
+- Open the Prometheus UI:
+  - Navigate to: `http://localhost:9090` → tab **"Graph"**
+
+- Run the following queries:
+  - `sms_predictions_total`
+  - `sms_active_requests`
