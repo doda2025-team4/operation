@@ -74,3 +74,7 @@
 
 - Noky:
   - Did the docker to kubernetes migration of assignment 3, [PR24](https://github.com/doda2025-team4/operation/pull/24)
+
+- Mohammed:
+  - Refined the F10 implementation by updating `serve_model.py`, cleaning up the Dockerfile (no hard-coded model), adjusting `requirements.txt`, and addressing the review comments in `model-service` and `operation`. [PR3](https://github.com/doda2025-team4/model-service/pull/3)
+
