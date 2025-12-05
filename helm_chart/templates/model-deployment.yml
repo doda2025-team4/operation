@@ -5,8 +5,8 @@ metadata:
 spec:
   replicas: 1
   selector:
-      matchLabels:
-        app: model-service
+    matchLabels:
+      app: model-service
   template:
     metadata:
       labels:
@@ -14,6 +14,12 @@ spec:
     spec:
       containers:
         - name: model-container
-          image: dodateam2025-team4/model-service:latest
+          image: ghcr.io/doda2025-team4/model-service:latest
+          env:
+            - name: MODEL_SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: MODEL_SERVICE_PORT
           ports:
-            - containerPort: 8081
+            - containerPort: {{ .Values.model.env.port }}

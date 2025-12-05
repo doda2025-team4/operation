@@ -6,10 +6,9 @@ app:
   replicaCount: 1
   env:
     serverPort: 8080
-    modelHost: "http://model-service:8081"
   service:
     type: ClusterIP
-    port: 80
+    port: 8080
 
 model:
   image:

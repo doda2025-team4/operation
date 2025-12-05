@@ -4,9 +4,9 @@ kind: Service
 metadata:
   name: app-service
 spec:
+  type: ClusterIP
   selector:
     app: app-service
   ports:
-      - port: 8080            # external port
-        targetPort: 8080    # container port (SERVER_PORT)
-  type: ClusterIP     # or NodePort if not on cloud / change as needed
+    - port: {{ .Values.app.service.port }}     # external port
+      targetPort: {{ .Values.app.env.serverPort }}    # container port (SERVER_PORT)
