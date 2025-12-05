@@ -78,3 +78,6 @@
 - Mohammed:
   - Refined the F10 implementation by updating `serve_model.py`, cleaning up the Dockerfile (no hard-coded model), adjusting `requirements.txt`, and addressing the review comments in `model-service` and `operation`. [PR3](https://github.com/doda2025-team4/model-service/pull/3)
 
+- Poyraz:
+  - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
+
