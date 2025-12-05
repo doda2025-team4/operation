@@ -81,3 +81,11 @@
 - Poyraz:
   - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
 
+- Kasper:
+  - In `operation`: [PR 23](https://github.com/doda2025-team4/operation/pull/23)
+    - Fixed F10 from A1
+  - In `app`: [PR 8](https://github.com/doda2025-team4/app/pull/8)
+    - Fixed image versioning and release and fixed deployment
+  - In `model-service : [PR 5](https://github.com/doda2025-team4/model-service/pull/5)
+    - Fixed image versioning and release
+
