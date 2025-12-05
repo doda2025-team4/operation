@@ -8,5 +8,5 @@ spec:
   selector:
     app: model-service
   ports:
-    - port: 8081
-      targetPort: 8081
+    - port: {{ .Values.model.service.port }}
+      targetPort: {{ .Values.model.env.port }}

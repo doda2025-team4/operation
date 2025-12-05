@@ -1,0 +1,12 @@
+# App Service (exposed externally)
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: app-service
+  ports:
+    - port: {{ .Values.app.service.port }}     # external port
+      targetPort: {{ .Values.app.env.serverPort }}    # container port (SERVER_PORT)
