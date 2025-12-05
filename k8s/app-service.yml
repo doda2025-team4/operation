@@ -1,0 +1,12 @@
+# App Service (exposed externally)
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    app: app-service
+  ports:
+      - port: 8080            # external port
+        targetPort: 8080    # container port (SERVER_PORT)
+  type: ClusterIP     # or NodePort if not on cloud / change as needed

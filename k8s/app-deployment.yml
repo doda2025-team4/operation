@@ -1,0 +1,33 @@
+# app-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: app-deployment
+
+spec:
+  selector:
+    matchLabels:
+      app: app-service
+  template:
+    metadata:
+      labels:
+        app: app-service
+    spec:
+      containers:
+        - name: app-container
+          image: dodateam2025-team4/app:latest
+          env:
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: SERVER_PORT
+            - name: MODEL_SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: MODEL_SERVICE_PORT
+          ports:
+            - containerPort: 8080
+
+

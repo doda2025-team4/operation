@@ -1,0 +1,12 @@
+# Model Service (Cluster-internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  type: ClusterIP
+  selector:
+    app: model-service
+  ports:
+    - port: 8081
+      targetPort: 8081

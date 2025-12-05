@@ -69,3 +69,8 @@
 - Joshua:
   - In `operation`: [PR 7](https://github.com/doda2025-team4/operation/pull/7).
   - I have worked on A2 by implementing steps 1-12
+
+### Week Q2.4 (Dec 1+)
+
+- Noky:
+  - Did the docker to kubernetes migration of assignment 3, [PR24](https://github.com/doda2025-team4/operation/pull/24)

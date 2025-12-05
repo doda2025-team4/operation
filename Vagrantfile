@@ -10,6 +10,10 @@ Vagrant.configure("2") do |config|
 
   # Controller VM
   config.vm.define "ctrl" do |ctrl|
+    config.trigger.before :up do |trigger|
+      trigger.warn = "removing standard dhcp host interface if existent"
+      trigger.run = {inline: "bash -c 'if [ $( VBoxManage list dhcpservers | grep -c vboxnet0 ) != \"0\" ]; then VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0; fi'"}
+    end
     ctrl.vm.hostname = "ctrl"
     ctrl.vm.network "private_network", ip: "192.168.56.100"
 

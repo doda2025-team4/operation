@@ -146,9 +146,38 @@ vagrant up
   Implemented in `node.yaml`.  
   Verification:  
   `vagrant ssh ctrl -c "kubectl get nodes"`
+  Note: This did not initially work due to a conflicting IPv4 address with the VirtualBox DHCP Server. [This](https://stackoverflow.com/questions/70675062/vagrant-with-virtualbox-does-not-start-because-of-standard-dhcp-vboxnet0-on-ub) is the source of the solution.
 
 - **Step 20 – Install MetalLB**  
   Implemented in `finalization.yml`.  
   Verification:  
   `vagrant ssh ctrl -c "kubectl get pods -n metallb-system"`  
   `vagrant ssh ctrl -c "kubectl get ipaddresspools.metallb.io -n metallb-system"`
+
+- **Step 21 – Install Nginx Ingress Controller**  
+  Implemented in `finalization.yml`. 
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get svc -n ingress-nginx"`  
+  `vagrant ssh ctrl -c "kubectl get pods -n ingress-nginx"`
+
+- **Step 22 – Install Kubernetes Dashboard + TLS + Ingress**  
+  Implemented in `finalization.yml`.  
+  Verification:  
+  - Check dashboard components:  
+    `vagrant ssh ctrl -c "kubectl get pods -n kubernetes-dashboard"`  
+  - Check TLS Secret exists:  
+    `vagrant ssh ctrl -c "kubectl get secret dashboard-tls -n kubernetes-dashboard"`  
+  - Check Ingress host and IP:  
+    `vagrant ssh ctrl -c "kubectl get ingress -n kubernetes-dashboard"`  
+  - Generate login token:  
+    `vagrant ssh ctrl -c "kubectl -n kubernetes-dashboard create token admin-user"`  
+  - Open Dashboard in browser:  
+    [dashboard.local](https://dashboard.local-192-168-56-90.sslip.io)  
+    Click **Advanced** → **Continue** and paste the token at login.
+
+- **Step 23 – Install Istio**  
+  Implemented in `finalization.yml`. 
+  Verification:  
+  `vagrant ssh ctrl -c "kubectl get pods -n istio-system"`  
+  `vagrant ssh ctrl -c "kubectl get svc -n istio-system"`  
+  `vagrant ssh ctrl -c "istioctl version"`
