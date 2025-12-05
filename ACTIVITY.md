@@ -65,7 +65,6 @@
 - Andrea:
   - I have worked on A2 by fixing the issues encountered in several steps in [PR 8](https://github.com/doda2025-team4/operation/pull/8), [PR 16](https://github.com/doda2025-team4/operation/pull/16), helped in general with reviews in Pull Requests.
 
-
 - Joshua:
   - In `operation`: [PR 7](https://github.com/doda2025-team4/operation/pull/7).
   - I have worked on A2 by implementing steps 1-12
@@ -78,3 +77,6 @@
 - Mohammed:
   - Refined the F10 implementation by updating `serve_model.py`, cleaning up the Dockerfile (no hard-coded model), adjusting `requirements.txt`, and addressing the review comments in `model-service` and `operation`. [PR3](https://github.com/doda2025-team4/model-service/pull/3)
 
+- Joshua:
+  - In `operation`: [PR 26](https://github.com/doda2025-team4/operation/pull/26).
+  - I have worked on A3 by alerting. Currently incomplete because Prometheus is not yet integrated.
