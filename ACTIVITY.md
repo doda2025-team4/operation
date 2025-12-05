@@ -65,3 +65,7 @@
 - Andrea:
   - I have worked on A2 by fixing the issues encountered in several steps in [PR 8](https://github.com/doda2025-team4/operation/pull/8), [PR 16](https://github.com/doda2025-team4/operation/pull/16), helped in general with reviews in Pull Requests.
 
+### Week Q2.4 (Dec 1+)
+
+- Noky:
+  - Did the docker to kubernetes migration of assignment 3, [PR24](https://github.com/doda2025-team4/operation/pull/24)
