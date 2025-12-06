@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-service
+  template:
+    metadata:
+      labels:
+        app: model-service
+    spec:
+      containers:
+        - name: model-container
+          image: ghcr.io/doda2025-team4/model-service:latest
+          env:
+            - name: MODEL_SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: MODEL_SERVICE_PORT
+          ports:
+            - containerPort: {{ .Values.model.env.port }}

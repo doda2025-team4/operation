@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: environment-config
+data:
+  SERVER_PORT: "{{ .Values.app.env.serverPort }}"
+  MODEL_SERVICE_PORT: "{{ .Values.model.env.port }}"

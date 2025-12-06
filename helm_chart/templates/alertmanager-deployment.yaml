@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doda-alertmanager
+  labels:
+    app: doda-alertmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doda-alertmanager
+  template:
+    metadata:
+      labels:
+        app: doda-alertmanager
+    spec:
+      containers:
+        - name: alertmanager
+          image: "{{ .Values.alerting.alertmanagerImage }}"
+          args:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+          ports:
+            - containerPort: 9093
+              name: web
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alertmanager
+      volumes:
+        - name: config
+          configMap:
+            name: doda-alertmanager-config

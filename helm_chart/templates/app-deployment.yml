@@ -2,8 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: app-deployment
-
+  name: app-deployment
 spec:
   selector:
     matchLabels:
@@ -15,19 +14,16 @@ spec:
     spec:
       containers:
         - name: app-container
-          image: dodateam2025-team4/app:latest
+          image: ghcr.io/doda2025-team4/app:latest
           env:
             - name: SERVER_PORT
               valueFrom:
                 configMapKeyRef:
                   name: environment-config
                   key: SERVER_PORT
-            - name: MODEL_SERVICE_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: environment-config
-                  key: MODEL_SERVICE_PORT
+
+            - name: MODEL_HOST
+              value: "http://model-service:{{ .Values.model.env.port }}"
+
           ports:
-            - containerPort: 8080
-
-
+            - containerPort: {{ .Values.app.env.serverPort }}
