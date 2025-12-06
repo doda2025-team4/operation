@@ -79,7 +79,7 @@
 
 - Joshua:
   - In `operation`: [PR 26](https://github.com/doda2025-team4/operation/pull/26).
-  - I have worked on A3 by alerting. Currently incomplete because Prometheus is not yet integrated.
+  - I have worked on A3 by implementing alerting. Currently incomplete because Prometheus is not yet integrated.
 
 - Poyraz:
   - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
@@ -95,3 +95,7 @@
 - Andrea:
   - I have implemented steps from 21 to 23 for A2 in [PR 18](https://github.com/doda2025-team4/operation/pull/18), worked on "enable monitoring" for A3 in [PR 9](https://github.com/doda2025-team4/app/pull/9) and [PR 30](https://github.com/doda2025-team4/operation/pull/30)
 
+### Week Q2.5 (Dec 8+)
+- Joshua:
+  - In `operation`: [PR 32](https://github.com/doda2025-team4/operation/pull/32).
+  - I have worked on A4 by adding the initial setup for istio
