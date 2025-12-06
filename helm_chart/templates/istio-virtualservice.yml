@@ -1,0 +1,19 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: doda-virtualservice
+spec:
+  hosts:
+    {{- range .Values.istio.hosts }}
+    - {{ . }}
+    {{- end }}
+  gateways:
+    - {{ .Values.istio.gateway.name }}
+  http:
+    - route:
+        - destination:
+            host: app-service
+            port:
+              number: {{ .Values.app.service.port }}
+{{- end }}

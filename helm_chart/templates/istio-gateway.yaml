@@ -1,0 +1,20 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ .Values.istio.gateway.name }}
+spec:
+  selector:
+    {{- range $key, $val := .Values.istio.gateway.selector }}
+    {{ $key }}: {{ $val }}
+    {{- end }}
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        {{- range .Values.istio.hosts }}
+        - {{ . }}
+        {{- end }}
+{{- end }}

@@ -41,3 +41,12 @@ alerting:
     to: "placeholder@tempmail.com"
 monitoring:
   enabled: true
+
+istio:
+  enabled: true
+  gateway:
+    name: doda-gateway
+    selector:
+      istio: ingressgateway
+  hosts:
+    - "*"
