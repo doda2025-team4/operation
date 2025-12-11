@@ -54,7 +54,7 @@ vagrant up
   Implemented in workflows under  `.github/workflows/train-release-model.yml` of model service
 
 - **F10 – No Hard-coded Model in Model-Service**  
-  Not implemented.
+  Provide the models by either by manually downloading the desired `model.joblib` and `preprocessor.joblib` files,  placing them in a folder called `model-storage` and inform docker compose using env variables, or put the download url in the docker compose env variables.
 
 - **F11 – lib-version Pre-release Automation**  
   See [DEVLOG](https://github.com/doda2025-team4/lib-version/blob/A1/DEVLOG.md)
