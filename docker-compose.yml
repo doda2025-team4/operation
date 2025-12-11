@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   model-service:
-    image: test_model #ghcr.io/doda2025-team4/model-service:latest
+    image: ghcr.io/doda2025-team4/model-service:latest
     container_name: model-service
     environment:
       MODEL_SERVICE_PORT: ${MODEL_SERVICE_PORT}
