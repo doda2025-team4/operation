@@ -18,6 +18,11 @@ model:
   replicaCount: 1
   env:
     port: 8081
+    modelDir: "/model-storage"
+    modelFile: "model.joblib"
+    preprocessorFile: "preprocesser.joblib"
+    modelURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/model.joblib"
+    preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/preprocessor.joblib"
   service:
     type: ClusterIP
     port: 8081
