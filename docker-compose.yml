@@ -18,11 +18,11 @@ services:
     container_name: model-service
     environment:
       MODEL_SERVICE_PORT: ${MODEL_SERVICE_PORT}
-      MODEL_DIR: /models
-      MODEL_FILE: model.joblib
-      PREPROCESSOR_FILE: preprocessor.joblib
-      MODEL_URL: https://github.com/doda2025-team4/model-service/releases/download/model-20251205-113245/model.joblib
-      PREPROCESSOR_URL: https://github.com/doda2025-team4/model-service/releases/download/model-20251205-113245/preprocessor.joblib
+      MODEL_DIR: ${MODEL_DIR}
+      MODEL_FILE: ${MODEL_FILE}
+      PREPROCESSOR_FILE: ${PREPROCESSOR_FILE}
+      MODEL_URL: ${MODEL_URL}
+      PREPROCESSOR_URL: ${PREPROCESSOR_URL}
     volumes:
       - ./model-storage:/models:Z
     restart: unless-stopped
