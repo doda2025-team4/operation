@@ -4,6 +4,9 @@ app:
     tag: "latest"
     pullPolicy: IfNotPresent
   replicaCount: 1
+  canary:
+    enabled: true
+    replicaCount: 1
   hostname: "dodateam4-app"
   env:
     serverPort: 8080
@@ -48,6 +51,23 @@ alerting:
 monitoring:
   enabled: true
 
+istio:
+  enabled: true
+  ingressGateway:
+    selectorLabelKey: istio
+    selectorLabelValue: ingressgateway
+
+  gateway:
+    name: sms-gateway
+
+  hosts:
+    stable: "sms.local"
+    preview: "sms-preview.local"
+
+  canary:
+    weight: 10
+    cookieName: "user-experiment"
+    cookieTtl: "30m"
   grafana:
     sidecar:
       dashboards:
