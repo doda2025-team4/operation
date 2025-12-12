@@ -79,7 +79,7 @@
 
 - Joshua:
   - In `operation`: [PR 26](https://github.com/doda2025-team4/operation/pull/26).
-  - I have worked on A3 by alerting. Currently incomplete because Prometheus is not yet integrated.
+  - I have worked on A3 by implementing alerting. Currently incomplete because Prometheus is not yet integrated.
 
 - Poyraz:
   - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
@@ -95,3 +95,23 @@
 - Andrea:
   - I have implemented steps from 21 to 23 for A2 in [PR 18](https://github.com/doda2025-team4/operation/pull/18), worked on "enable monitoring" for A3 in [PR 9](https://github.com/doda2025-team4/app/pull/9) and [PR 30](https://github.com/doda2025-team4/operation/pull/30)
 
+### Week Q2.5 (Dec 8+)
+
+- Andrea:
+  - I have worked on implementing "Grafana" for A3 in [PR 41](https://github.com/doda2025-team4/operation/pull/41)
+
+- Poyraz:
+  - Did the traffic management part of A4. [PR 42](https://github.com/doda2025-team4/operation/pull/42)
+
+- Joshua:
+  - In `app`: [PR 12](https://github.com/doda2025-team4/app/pull/12).
+  - I have added input validation and a corresponding new metric
+  - In `operation`: [PR 32](https://github.com/doda2025-team4/operation/pull/32).
+  - I have worked on A4 by adding the initial setup for istio
+
+- Noky:
+  - I have worked on adding a config and secrets map in the helm charts [PR 40](https://github.com/doda2025-team4/operation/pull/40)
+ 
+- Mohammed:
+  - Fixed preprocessor loading in `model-service`. [PR 3](https://github.com/doda2025-team4/model-service/pull/3)
+  - Updated `docker-compose.yml` with preprocessor variables. [PR 46](https://github.com/doda2025-team4/operation/pull/46)

@@ -25,7 +25,16 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/alertmanager
+            - name: smtp-password
+              mountPath: /etc/secrets
+              readOnly: true
       volumes:
         - name: config
           configMap:
             name: doda-alertmanager-config
+        - name: smtp-password
+          secret:
+            secretName: secret-config
+            items:
+              - key: SMTP_PASSWORD
+                path: smtp_password

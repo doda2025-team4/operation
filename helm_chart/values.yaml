@@ -7,6 +7,7 @@ app:
   canary:
     enabled: true
     replicaCount: 1
+  hostname: "dodateam4-app"
   env:
     serverPort: 8080
   service:
@@ -21,6 +22,11 @@ model:
   replicaCount: 1
   env:
     port: 8081
+    modelDir: "/model-storage"
+    modelFile: "model.joblib"
+    preprocessorFile: "preprocesser.joblib"
+    modelURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/model.joblib"
+    preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/preprocessor.joblib"
   service:
     type: ClusterIP
     port: 8081
@@ -39,7 +45,7 @@ alerting:
   smtp:
     host: "smtp.gmail.com:587"
     username: "temp@tempmail.com"
-    password: "REPLACE_THIS"
+    # password is stored in secret-config Secret as SMTP_PASSWORD
     from: "placeholder@tempmail.com"
     to: "placeholder@tempmail.com"
 monitoring:
@@ -62,3 +68,11 @@ istio:
     weight: 10
     cookieName: "user-experiment"
     cookieTtl: "30m"
+  grafana:
+    sidecar:
+      dashboards:
+        enabled: true
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+
