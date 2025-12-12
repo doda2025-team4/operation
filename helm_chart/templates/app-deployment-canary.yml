@@ -1,19 +1,20 @@
-# app-deployment.yml
+# app-deployment-canary.yml
+{{- if and .Values.istio.enabled .Values.app.canary.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-deployment
+  name: app-deployment-canary
 spec:
-  replicas: {{ .Values.app.replicaCount }}
+  replicas: {{ .Values.app.canary.replicaCount }}
   selector:
     matchLabels:
       app: app-service
-      version: stable
+      version: canary
   template:
     metadata:
       labels:
         app: app-service
-        version: stable
+        version: canary
     spec:
       containers:
         - name: app-container
@@ -30,3 +31,4 @@ spec:
 
           ports:
             - containerPort: {{ .Values.app.env.serverPort }}
+{{- end }}

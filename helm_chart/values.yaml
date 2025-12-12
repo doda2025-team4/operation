@@ -4,6 +4,9 @@ app:
     tag: "latest"
     pullPolicy: IfNotPresent
   replicaCount: 1
+  canary:
+    enabled: true
+    replicaCount: 1
   env:
     serverPort: 8080
   service:
@@ -41,3 +44,21 @@ alerting:
     to: "placeholder@tempmail.com"
 monitoring:
   enabled: true
+
+istio:
+  enabled: true
+  ingressGateway:
+    selectorLabelKey: istio
+    selectorLabelValue: ingressgateway
+
+  gateway:
+    name: sms-gateway
+
+  hosts:
+    stable: "sms.local"
+    preview: "sms-preview.local"
+
+  canary:
+    weight: 10
+    cookieName: "user-experiment"
+    cookieTtl: "30m"
