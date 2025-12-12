@@ -217,3 +217,31 @@ The monitoring with Prometheus can be verified by:
 - Run the following queries:
   - `sms_predictions_total`
   - `sms_active_requests`
+
+#### Grafana
+
+Grafana can be verified as follows:
+
+- Check that the Grafana pod is running:
+  - `kubectl get pods -n doda | grep grafana`
+
+- Port-forward the Grafana service:
+  - `kubectl port-forward svc/sms-app-grafana 3000:80 -n doda`
+
+- Open the Grafana UI:
+  - Navigate to: `http://localhost:3000`
+
+- Retrieve the admin password:
+  - `kubectl get secret -n doda sms-app-grafana -o jsonpath="{.data.admin-password}" | base64 -d; echo`
+
+- Login to Grafana:
+  - **Username:** `admin`
+  - **Password:** retrieved from the command above
+
+- Verify application metrics in Grafana:
+  - Port-forward the app service:
+    - `kubectl port-forward svc/app-service 8080:8080 -n doda`
+  - Open the application UI:
+    - Navigate to `http://localhost:8080/sms`
+  - Send a few SMS prediction requests to generate traffic
+  - In Grafana, open one of the dashboards and verify that the graphs update accordingly
