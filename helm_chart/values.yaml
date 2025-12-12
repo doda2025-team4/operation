@@ -4,6 +4,7 @@ app:
     tag: "latest"
     pullPolicy: IfNotPresent
   replicaCount: 1
+  hostname: "dodateam4-app"
   env:
     serverPort: 8080
   service:
@@ -41,7 +42,7 @@ alerting:
   smtp:
     host: "smtp.gmail.com:587"
     username: "temp@tempmail.com"
-    password: "REPLACE_THIS"
+    #password: "REPLACE_THIS" NOW IN secrets.yml
     from: "placeholder@tempmail.com"
     to: "placeholder@tempmail.com"
 monitoring:

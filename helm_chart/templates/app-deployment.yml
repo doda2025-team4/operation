@@ -12,6 +12,7 @@ spec:
       labels:
         app: app-service
     spec:
+      hostname: {{ .Values.app.hostname }}
       containers:
         - name: app-container
           image: ghcr.io/doda2025-team4/app:latest

@@ -9,7 +9,11 @@ data:
       smtp_from: "{{ .Values.alerting.smtp.from }}"
       smtp_smarthost: "{{ .Values.alerting.smtp.host }}"
       smtp_auth_username: "{{ .Values.alerting.smtp.username }}"
-      smtp_auth_password: "{{ .Values.alerting.smtp.password }}"
+      smtp_auth_password: 
+      valueFrom:
+        secretKeyRef:
+          name: secret-config
+          key: SMTP_PASSWORD
     route:
       receiver: "email-alert"
     receivers:
