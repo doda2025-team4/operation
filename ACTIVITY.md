@@ -65,7 +65,6 @@
 - Andrea:
   - I have worked on A2 by fixing the issues encountered in several steps in [PR 8](https://github.com/doda2025-team4/operation/pull/8), [PR 16](https://github.com/doda2025-team4/operation/pull/16), helped in general with reviews in Pull Requests.
 
-
 - Joshua:
   - In `operation`: [PR 7](https://github.com/doda2025-team4/operation/pull/7).
   - I have worked on A2 by implementing steps 1-12
@@ -78,6 +77,21 @@
 - Mohammed:
   - Refined the F10 implementation by updating `serve_model.py`, cleaning up the Dockerfile (no hard-coded model), adjusting `requirements.txt`, and addressing the review comments in `model-service` and `operation`. [PR3](https://github.com/doda2025-team4/model-service/pull/3)
 
+- Joshua:
+  - In `operation`: [PR 26](https://github.com/doda2025-team4/operation/pull/26).
+  - I have worked on A3 by alerting. Currently incomplete because Prometheus is not yet integrated.
+
 - Poyraz:
   - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
+
+- Kasper:
+  - In `operation`: [PR 23](https://github.com/doda2025-team4/operation/pull/23)
+    - Fixed F10 from A1
+  - In `app`: [PR 8](https://github.com/doda2025-team4/app/pull/8)
+    - Fixed image versioning and release and fixed deployment
+  - In `model-service : [PR 5](https://github.com/doda2025-team4/model-service/pull/5)
+    - Fixed image versioning and release
+
+- Andrea:
+  - I have implemented steps from 21 to 23 for A2 in [PR 18](https://github.com/doda2025-team4/operation/pull/18), worked on "enable monitoring" for A3 in [PR 9](https://github.com/doda2025-team4/app/pull/9) and [PR 30](https://github.com/doda2025-team4/operation/pull/30)
 
