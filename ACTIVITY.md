@@ -97,5 +97,7 @@
 
 ### Week Q2.5 (Dec 8+)
 - Joshua:
+  - In `app`: [PR 12](https://github.com/doda2025-team4/app/pull/12).
+  - I have added input validation and a corresponding new metric
   - In `operation`: [PR 32](https://github.com/doda2025-team4/operation/pull/32).
   - I have worked on A4 by adding the initial setup for istio
