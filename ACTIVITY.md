@@ -115,3 +115,7 @@
 - Mohammed:
   - Fixed preprocessor loading in `model-service`. [PR 3](https://github.com/doda2025-team4/model-service/pull/3)
   - Updated `docker-compose.yml` with preprocessor variables. [PR 46](https://github.com/doda2025-team4/operation/pull/46)
+
+- Kasper:
+  - I have worked on changing our versioning logic to allow the main branch in model-service and app to have both a latest release and a prerelease: [PR 13](https://github.com/doda2025-team4/app/pull/13) and [PR 7](https://github.com/doda2025-team4/model-service/pull/7).
+    - This needs to be done to release both versions of the application to do A/B testing.
