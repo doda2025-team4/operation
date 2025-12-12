@@ -1,0 +1,72 @@
+{
+  "title": "DODA – A3 Application Monitoring",
+  "schemaVersion": 38,
+  "version": 1,
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "type": "gauge",
+      "title": "Active SMS Requests",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sms_active_requests",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 6 }
+    },
+    {
+      "type": "stat",
+      "title": "Total Predictions",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(sms_predictions_total)",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 6 }
+    },
+    {
+      "type": "stat",
+      "title": "Prediction Error Rate (%)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "100 * sum(rate(sms_predictions_total{outcome=\"error\"}[5m])) / sum(rate(sms_predictions_total[5m]))",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 6 }
+    },
+    {
+      "type": "stat",
+      "title": "Prediction Success Rate (%)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "100 * sum(rate(sms_predictions_total{outcome=\"success\"}[5m])) / sum(rate(sms_predictions_total[5m]))",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 6 }
+    },
+
+    {
+      "type": "timeseries",
+      "title": "Prediction Throughput (req/s)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(sms_predictions_total[1m])",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 6, "w": 24, "h": 8 }
+    }
+  ]
+}
