@@ -111,3 +111,7 @@
 
 - Noky:
   - I have worked on adding a config and secrets map in the helm charts [PR 40](https://github.com/doda2025-team4/operation/pull/40)
+ 
+-Mohammed:
+  - Fixed preprocessor loading in `model-service`. [PR 3](https://github.com/doda2025-team4/model-service/pull/3)
+  - Updated `docker-compose.yml` with preprocessor variables. [PR 46](https://github.com/doda2025-team4/operation/pull/46)
