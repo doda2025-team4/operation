@@ -108,3 +108,6 @@
   - I have added input validation and a corresponding new metric
   - In `operation`: [PR 32](https://github.com/doda2025-team4/operation/pull/32).
   - I have worked on A4 by adding the initial setup for istio
+
+- Noky:
+  - I have worked on adding a config and secrets map in the helm charts [PR 40](https://github.com/doda2025-team4/operation/pull/40)
