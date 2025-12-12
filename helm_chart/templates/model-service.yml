@@ -1,0 +1,12 @@
+# Model Service (Cluster-internal)
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-service
+spec:
+  type: ClusterIP
+  selector:
+    app: model-service
+  ports:
+    - port: {{ .Values.model.service.port }}
+      targetPort: {{ .Values.model.env.port }}

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-service
+  template:
+    metadata:
+      labels:
+        app: model-service
+    spec:
+      containers:
+        - name: model-container
+          image: ghcr.io/doda2025-team4/model-service:latest
+          env:
+            - name: MODEL_SERVICE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: MODEL_SERVICE_PORT
+            - name: MODEL_DIR
+              valueFrom:
+                  configMapKeyRef:
+                    name: environment-config
+                    key: MODEL_DIR
+            - name: MODEL_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: MODEL_FILE
+            - name: PREPROCESSOR_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: PREPROCESSOR_FILE
+            - name: MODEL_URL
+              valueFrom:
+                  configMapKeyRef:
+                    name: environment-config
+                    key: MODEL_URL
+            - name: PREPROCESSOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-config
+                  key: PREPROCESSOR_URL
+          ports:
+            - containerPort: {{ .Values.model.env.port }}

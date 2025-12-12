@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+
+  # Tell Nginx Ingress to use HTTPS to communicate with the backend
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+spec:
+  #Use the Nginx Ingress Controller installed earlier
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - dashboard.local-192-168-56-90.sslip.io
+      secretName: dashboard-tls
+
+  rules:
+    - host: dashboard.local-192-168-56-90.sslip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubernetes-dashboard-kong-proxy
+                port:
+                  number: 443

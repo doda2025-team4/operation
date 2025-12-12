@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: environment-config
+data:
+  SERVER_PORT: "{{ .Values.app.env.serverPort }}"
+  MODEL_SERVICE_PORT: "{{ .Values.model.env.port }}"
+  HOST_APP_PORT: "{{.Values.app.service.port}}"
+  MODEL_DIR: "{{ .Values.model.env.modelDir }}"
+  MODEL_FILE: "{{ .Values.model.env.modelFile }}"
+  PREPROCESSOR_FILE: "{{ .Values.model.env.preprocessorFile }}"
+  MODEL_URL: "{{ .Values.model.env.modelURL }}"
+  PREPROCESSOR_URL: "{{ .Values.model.env.preprocessorURL }}"

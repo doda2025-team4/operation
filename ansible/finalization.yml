@@ -1,0 +1,226 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+
+  # STEP 20 — MetalLB Installation
+    - name: Ensure MetalLB directory exists on controller
+      file:
+        path: /home/vagrant/metallb
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+
+    - name: Copy MetalLB main manifest to controller
+      copy:
+        src: ../k8s/metallb/metallb-native-0.14.9.yml
+        dest: /home/vagrant/metallb/metallb-native-0.14.9.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply MetalLB CRDs and components
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/metallb-native-0.14.9.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+    
+    - name: Wait for MetalLB controller to be ready
+      become_user: vagrant
+      command: >
+        kubectl wait -n metallb-system
+        -l app=metallb,component=controller
+        --for=condition=ready pod
+        --timeout=120s
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      changed_when: false
+
+    - name: Copy MetalLB IPAddressPool manifest
+      copy:
+        src: ../k8s/metallb/ipaddresspool.yml
+        dest: /home/vagrant/metallb/ipaddresspool.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Copy MetalLB L2Advertisement manifest
+      copy:
+        src: ../k8s/metallb/l2advertisement.yml
+        dest: /home/vagrant/metallb/l2advertisement.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply MetalLB IPAddressPool
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/ipaddresspool.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Apply MetalLB L2Advertisement
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/metallb/l2advertisement.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+  # STEP 21 - Install Nginx Ingress Controller
+
+    - name: Add ingress-nginx Helm repository
+      kubernetes.core.helm_repository:
+        name: ingress-nginx
+        repo_url: https://kubernetes.github.io/ingress-nginx
+    
+    - name: Install / upgrade Nginx Ingress Controller with specif IP
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        release_namespace: ingress-nginx
+        create_namespace: true
+        update_repo_cache: true
+        kubeconfig: /etc/kubernetes/admin.conf
+        values:
+          controller:
+            service:
+              loadBalancerIP: 192.168.56.90
+  
+  # STEP 22 — Kubernetes Dashboard
+              
+    - name: Add kubernetes-dashboard Helm repository
+      kubernetes.core.helm_repository:
+        name: kubernetes-dashboard
+        repo_url: https://kubernetes.github.io/dashboard/
+    
+    - name: Install / upgrade Kubernetes Dashboard
+      kubernetes.core.helm:
+        name: kubernetes-dashboard
+        chart_ref: kubernetes-dashboard/kubernetes-dashboard
+        release_namespace: kubernetes-dashboard
+        create_namespace: true
+        update_repo_cache: true
+        kubeconfig: /etc/kubernetes/admin.conf
+
+    - name: Ensure dashboard manifest directory exists
+      file:
+        path: /home/vagrant/dashboard
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+
+    - name: Copy Dashboard admin-user RBAC manifest
+      copy:
+        src: ../k8s/dashboard/admin-user.yml
+        dest: /home/vagrant/dashboard/admin-user.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply Dashboard admin-user RBAC manifest
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/dashboard/admin-user.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+    
+    - name: Copy Dashboard TLS Secret manifest
+      copy:
+        src: ../k8s/dashboard/dashboard-tls.yml
+        dest: /home/vagrant/dashboard/dashboard-tls.yml
+
+    - name: Apply Dashboard TLS Secret
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/dashboard/dashboard-tls.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+    - name: Copy Dashboard Ingress manifest
+      copy:
+        src: ../k8s/dashboard/dashboard-ingress.yml
+        dest: /home/vagrant/dashboard/dashboard-ingress.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Apply Dashboard Ingress manifest
+      become_user: vagrant
+      command: kubectl apply -f /home/vagrant/dashboard/dashboard-ingress.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+
+  # STEP 23 — Istio Installation
+
+    - name: Ensure Istio directory exists
+      file:
+        path: /home/vagrant/istio
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0755"
+
+    - name: Check if Istio is already extracted
+      stat:
+        path: /home/vagrant/istio/istio-1.25.2
+      register: istio_dir
+
+    - name: Download and extract Istio 1.25.2
+      unarchive:
+        src: "https://github.com/istio/istio/releases/download/1.25.2/istio-1.25.2-linux-amd64.tar.gz"
+        dest: /home/vagrant/istio
+        remote_src: true
+      when: not istio_dir.stat.exists
+
+    - name: Install istioctl to /usr/local/bin
+      copy:
+        remote_src: true
+        src: /home/vagrant/istio/istio-1.25.2/bin/istioctl
+        dest: /usr/local/bin/istioctl
+        mode: "0755"
+
+    - name: Copy custom Istio config (config.yml)
+      copy:
+        src: ../k8s/istio/config.yml
+        dest: /home/vagrant/istio/config.yml
+        owner: vagrant
+        group: vagrant
+        mode: "0644"
+
+    - name: Check if Istio is already installed
+      become_user: vagrant
+      command: kubectl get deployment -n istio-system istiod
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      register: istio_installed
+      failed_when: false
+      changed_when: false
+
+    - name: Install Istio using config.yml
+      become_user: vagrant
+      command: >
+        istioctl install -y -f /home/vagrant/istio/config.yml
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      when: "'NotFound' in istio_installed.stderr"
+    
+    - name: Wait for istiod deployment to be ready
+      become_user: vagrant
+      command: >
+        kubectl wait deployment/istiod
+        -n istio-system
+        --for=condition=available
+        --timeout=180s
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      changed_when: false
+
+    - name: Wait for istio-ingressgateway to be ready
+      become_user: vagrant
+      command: >
+        kubectl wait deployment/istio-ingressgateway
+        -n istio-system
+        --for=condition=available
+        --timeout=180s
+      environment:
+        KUBECONFIG: /home/vagrant/.kube/config
+      changed_when: false
