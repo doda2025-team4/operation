@@ -100,3 +100,6 @@
 - Andrea:
   - I have worked on implementing "Grafana" for A3 in [PR 41](https://github.com/doda2025-team4/operation/pull/41)
 
+- Poyraz:
+  - Did the traffic management part of A4. [PR 42](https://github.com/doda2025-team4/operation/pull/42)
+
