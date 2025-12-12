@@ -95,3 +95,8 @@
 - Andrea:
   - I have implemented steps from 21 to 23 for A2 in [PR 18](https://github.com/doda2025-team4/operation/pull/18), worked on "enable monitoring" for A3 in [PR 9](https://github.com/doda2025-team4/app/pull/9) and [PR 30](https://github.com/doda2025-team4/operation/pull/30)
 
+### Week Q2.5 (Dec 8+)
+
+- Andrea:
+  - I have worked on implementing "Grafana" for A3 in [PR 41](https://github.com/doda2025-team4/operation/pull/41)
+
