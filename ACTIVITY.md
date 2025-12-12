@@ -79,7 +79,7 @@
 
 - Joshua:
   - In `operation`: [PR 26](https://github.com/doda2025-team4/operation/pull/26).
-  - I have worked on A3 by alerting. Currently incomplete because Prometheus is not yet integrated.
+  - I have worked on A3 by implementing alerting. Currently incomplete because Prometheus is not yet integrated.
 
 - Poyraz:
   - Did the helm chart part of assignment 3,[PR25] (https://github.com/doda2025-team4/operation/pull/25)
@@ -103,3 +103,8 @@
 - Poyraz:
   - Did the traffic management part of A4. [PR 42](https://github.com/doda2025-team4/operation/pull/42)
 
+- Joshua:
+  - In `app`: [PR 12](https://github.com/doda2025-team4/app/pull/12).
+  - I have added input validation and a corresponding new metric
+  - In `operation`: [PR 32](https://github.com/doda2025-team4/operation/pull/32).
+  - I have worked on A4 by adding the initial setup for istio
