@@ -1,3 +1,4 @@
 .vagrant
 admin.conf
 model-storage/
+ansible/inventory.cfg

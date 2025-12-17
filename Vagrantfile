@@ -47,5 +47,8 @@ Vagrant.configure("2") do |config|
       worker_count: WORKER_COUNT
     }
   end
-  
+
+  config.trigger.after [:up, :provision] do |trigger|
+    trigger.run = {inline: "cp .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory ansible/inventory.cfg"}
+  end
 end
