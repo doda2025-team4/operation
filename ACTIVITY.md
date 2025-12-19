@@ -124,3 +124,6 @@
 
 - Mohammed:
   - Added Vagrant trigger to auto-generate inventory.cfg with active nodes. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
+
+- Andrea:
+  - I helped reviewing the open PRs. I couldn’t open a PR myself this week, but I will compensate in week 7
