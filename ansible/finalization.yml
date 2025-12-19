@@ -199,9 +199,9 @@
     - name: Install Istio using config.yml (alternative)
       become_user: vagrant
       command: >
-          istioctl install -y -f /home/vagrant/istio/config.yml
+        istioctl install -y -f /home/vagrant/istio/config.yml
       environment:
-          KUBECONFIG: /home/vagrant/.kube/config
+        KUBECONFIG: /home/vagrant/.kube/config
       when: istio_installed is defined and (istio_installed.resources | default([]) | length) == 0
     
     - name: Wait for istiod deployment to be ready
