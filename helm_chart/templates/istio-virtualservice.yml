@@ -5,17 +5,18 @@ metadata:
   name: app-virtualservice
 spec:
   hosts:
-    - {{ .Values.istio.hosts.stable | quote }}
+  - {{ .Values.istio.hosts.stable | quote }}
   gateways:
-    - {{ .Values.istio.gateway.name }}
+  - {{ .Values.istio.gateway.name | quote }}
   http:
-    - route:
-        - destination:
-            host: app-service
-            subset: stable
-          weight: {{ 100 - .Values.istio.canary.weight }}
-        - destination:
-            host: app-service
-            subset: canary
-          weight: {{ .Values.istio.canary.weight }}
+  - name: primary
+    route:
+    - destination:
+        host: app-service
+        subset: stable
+      weight: {{ sub 100 (.Values.istio.canary.weight | int) }}
+    - destination:
+        host: app-service
+        subset: canary
+      weight: {{ .Values.istio.canary.weight | int }}
 {{- end }}
