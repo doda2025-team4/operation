@@ -1,3 +1,5 @@
 .vagrant
 admin.conf
 model-storage/
+helm_chart/Chart.lock
+helm_chart/charts/
