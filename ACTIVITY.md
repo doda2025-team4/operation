@@ -138,3 +138,6 @@
 - Kasper:
   - I have completed changing our versioning logic to allow the main branch in model-service and app to have both a latest release and a prerelease: [PR 13](https://github.com/doda2025-team4/app/pull/13) and [PR 7](https://github.com/doda2025-team4/model-service/pull/7).
     - This was harder than anticipated, but it is now implemented for all repos except operation.
+   
+- Noky:
+  - I have worked on [PR50](https://github.com/doda2025-team4/operation/pull/50) to implement some builtin in modules instead of using i.e. a kubectl command
