@@ -131,3 +131,6 @@
 - Joshua:
   - In `operation`: [PR 51](https://github.com/doda2025-team4/operation/pull/51).
   - I have added the outline and documentation for what we have done on A4 so far
+
+- Poyraz:
+  - Implemented the base part of rate limiting for additional use case. [PR 53](https://github.com/doda2025-team4/operation/pull/53).
