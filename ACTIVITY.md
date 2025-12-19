@@ -127,3 +127,7 @@
 
 - Andrea:
   - I helped reviewing the open PRs. I couldn’t open a PR myself this week, but I will compensate in week 7
+
+- Joshua:
+  - In `operation`: [PR 51](https://github.com/doda2025-team4/operation/pull/51).
+  - I have added the outline and documentation for what we have done on A4 so far
