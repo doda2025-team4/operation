@@ -274,5 +274,38 @@ Istio is installed during provisioning is referenced by the Helm chart, which de
 ####  Where is the 90/10 split configured? Where is the routing decision taken
 - The 90/10 split defined in istio-virtualservice.yaml, from Values.istio.canary.weight. 90% stable, 10% canary
 
+#### Sticky Sessions
+- Sticky sessions ensure that once a user is routed to a specific version (stable or canary), they continue to see that version on subsequent requests.
+- 1. The first request is routed based on the configured weights (90/10)
+- 2. A cookie is set (`user-experiment`) to  identify the selected subset
+- 3. Subsequent requests from the same user are then routed to the same subset
+- 4. By default the Cookie TTL is 30 minutes
+
+**Configuration in `values.yaml`:**
+- `istio.canary.cookieName` - Name of the sticky session cookie
+- `istio.canary.cookieTtl` - Cookie time-to-live
+
+
+#### Verification
+
+```bash
+kubectl get gateway,virtualservice,destinationrule
+kubectl get pods -l app=app-service --show-labels
+```
+
+- Test Normal Request
+```bash
+curl -v -H "Host: sms.local" http://<INGRESS_IP>/sms/
+```
+
+- Test Sticky Sessions
+```bash
+# First request (saves cookie)
+curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+
+# Subsequent requests (should hit same version)
+curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+```
+
 ####  Which component implements the additional use case
 - The additional use case is implemented through Istio VirtualService and DestinationRules. TODO
