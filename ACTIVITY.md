@@ -146,3 +146,5 @@
 - Joshua:
   - In `operation`: [PR 58](https://github.com/doda2025-team4/operation/pull/58).
   - I have made final updates to A2 mostly relating to the package versions of steps 9 and 10
+  - In `operation`: [PR 59](https://github.com/doda2025-team4/operation/pull/59).
+  - I have addeed additional documentation regarding sticky sessions and verifications to match previous weeks
