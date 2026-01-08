@@ -141,3 +141,8 @@
    
 - Noky:
   - I have worked on [PR50](https://github.com/doda2025-team4/operation/pull/50) to implement some builtin in modules instead of using i.e. a kubectl command
+
+### Week Q2.7 (Jan 5+) 
+- Joshua:
+  - In `operation`: [PR 58](https://github.com/doda2025-team4/operation/pull/58).
+  - I have made final updates to A2 mostly relating to the package versions of steps 9 and 10
