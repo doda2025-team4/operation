@@ -7,7 +7,7 @@ data:
   config.yaml: |
     domain: {{ .Values.istio.globalRateLimit.domain }}
     descriptors:
-      - key: PATH
+      - key: USER
         rate_limit:
           unit: {{ .Values.istio.globalRateLimit.unit }}
           requests_per_unit: {{ .Values.istio.globalRateLimit.requestsPerUnit }}

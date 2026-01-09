@@ -23,6 +23,6 @@ spec:
         rate_limits:
         - actions:
           - request_headers:
-              header_name: ":path"
-              descriptor_key: "PATH"
+              header_name: "x-user-id"
+              descriptor_key: "USER"
 {{- end }}
