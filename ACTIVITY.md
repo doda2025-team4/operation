@@ -148,3 +148,6 @@
   - I have made final updates to A2 mostly relating to the package versions of steps 9 and 10
   - In `operation`: [PR 59](https://github.com/doda2025-team4/operation/pull/59).
   - I have addeed additional documentation regarding sticky sessions and verifications to match previous weeks
+
+- Poyraz:
+  - Changed the rate limiting to per user based on header id. Also looked into other ways of doing it but I could only think of doing it based on JWT auth which I dont know if it is in the scope of the assignment. It might be better to get clarification on what needs to be done in order to get the per user requirement. [PR 64](https://github.com/doda2025-team4/operation/pull/64).
