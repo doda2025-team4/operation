@@ -202,7 +202,7 @@ The Vagrant cluster has Istio, MetalLB, and Ingress already configured via `fina
 
 2. **Connect kubectl to the Vagrant cluster:**
    ```bash
-   export KUBECONFIG=/home/noky/Programmeren/DevOpsOfDistributedApps/operation/admin.conf
+   export KUBECONFIG=../operation/admin.conf
    ```
 
 3. **Install the Helm chart:**
