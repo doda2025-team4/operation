@@ -13,7 +13,7 @@ spec:
         - destination:
             host: app-service
             subset: stable
-          weight: {{ 100 - .Values.istio.canary.weight }}
+          weight: {{ sub 100 .Values.istio.canary.weight }}
         - destination:
             host: app-service
             subset: canary
