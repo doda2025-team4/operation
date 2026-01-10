@@ -184,19 +184,64 @@ vagrant up
 
 ### A3
 
+#### Deployment Options
+
+You can deploy the application to either the **Vagrant cluster** (recommended, with Istio pre-installed) or **Minikube**.
+
+##### Option 1: Deploy to Vagrant Cluster (Recommended)
+
+The Vagrant cluster has Istio, MetalLB, and Ingress already configured via `finalization.yml`.
+
+1. **Start the Vagrant cluster:**
+   ```bash
+   vagrant up
+   cd ansible
+   ansible-playbook -u vagrant -i 192.168.56.100, finalization.yml
+   cd ..
+   ```
+
+2. **Connect kubectl to the Vagrant cluster:**
+   ```bash
+   export KUBECONFIG=/home/noky/Programmeren/DevOpsOfDistributedApps/operation/admin.conf
+   ```
+
+3. **Install the Helm chart:**
+   ```bash
+   cd helm_chart
+   helm dependency update .
+   kubectl create namespace doda
+   helm install sms-app . -n doda
+   ```
+
+##### Option 2: Deploy to Minikube
+
+1. **Start Minikube:**
+   ```bash
+   minikube start --memory=6144 --cpus=4
+   minikube addons enable ingress
+   ```
+
+2. **Install Istio on Minikube:**
+   ```bash
+   curl -L https://istio.io/downloadIstio | sh -
+   cd istio-*
+   export PATH=$PWD/bin:$PATH
+   istioctl install --set profile=default -y
+   cd ..
+   ```
+
+3. **Install the Helm chart:**
+   ```bash
+   cd helm_chart
+   helm dependency update .
+   kubectl create namespace doda
+   helm install sms-app . -n doda
+   ```
+
 #### Monitoring
 
 The monitoring with Prometheus can be verified by:
 
-- Start Minikube:
-  - `minikube start --memory=6144 --cpus=4` (reduce if needed)
-  - `minikube addons enable ingress`
-
-- Install the Helm chart:
-  - `cd helm_chart`
-  - `helm dependency update .`
-  - `kubectl create namespace doda`
-  - `helm install sms-app . -n doda`
 
 - Check pods:
   - `kubectl get pods -n doda`
