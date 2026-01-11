@@ -151,3 +151,6 @@
 
 - Poyraz:
   - Changed the rate limiting to per user based on header id. Also looked into other ways of doing it but I could only think of doing it based on JWT auth which I dont know if it is in the scope of the assignment. It might be better to get clarification on what needs to be done in order to get the per user requirement. [PR 64](https://github.com/doda2025-team4/operation/pull/64).
+
+- Andrea:
+  - I have worked on two first drafts for the proposed extension in [PR 67](https://github.com/doda2025-team4/operation/pull/67)
