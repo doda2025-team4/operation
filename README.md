@@ -201,8 +201,9 @@ The Vagrant cluster has Istio, MetalLB, and Ingress already configured via `fina
    ```
 
 2. **Connect kubectl to the Vagrant cluster:**
+put the absolute path to your kubeconfig file in place of YOUR_PATH
    ```bash
-   export KUBECONFIG=../operation/admin.conf
+   export KUBECONFIG=YOUR_PATH
    ```
 
 3. **Install the Helm chart:**
