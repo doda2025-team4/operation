@@ -7,6 +7,10 @@ app:
   canary:
     enabled: true
     replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team4/app
+      tag: "v0.4.0-canary.2"
+      pullPolicy: IfNotPresent
   hostname: "dodateam4-app"
   env:
     serverPort: 8080
@@ -20,11 +24,21 @@ model:
     tag: "latest"
     pullPolicy: IfNotPresent
   replicaCount: 1
+  canary:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team4/model-service
+      tag: "v1.3.0-canary.1"
+      pullPolicy: IfNotPresent
+    env:
+      modelURL: "https://github.com/doda2025-team4/model-service/releases/download/v1.3.0-canary.1/model.joblib"
+      preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/v1.3.0-canary.1/preprocessor.joblib"
   env:
     port: 8081
     modelDir: "/model-storage"
     modelFile: "model.joblib"
-    preprocessorFile: "preprocesser.joblib"
+    preprocessorFile: "preprocessor.joblib"
     modelURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/model.joblib"
     preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/preprocessor.joblib"
   service:
@@ -51,6 +65,17 @@ alerting:
 monitoring:
   enabled: true
 
+  prometheusOperator:
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+    admissionWebhooks:
+      patch:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+      create:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+
 istio:
   enabled: true
   ingressGateway:
@@ -67,7 +92,7 @@ istio:
   canary:
     weight: 10
     cookieName: "user-experiment"
-    cookieTtl: "30m"
+    cookieMaxAgeSeconds: 1800
   grafana:
     sidecar:
       dashboards:

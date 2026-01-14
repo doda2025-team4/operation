@@ -1,0 +1,38 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: model-virtualservice
+spec:
+  hosts:
+    - model-service
+  http:
+    # If the request comes from app-service CANARY -> go to model CANARY
+    - match:
+        - sourceLabels:
+            app: app-service
+            version: canary
+      route:
+        - destination:
+            host: model-service
+            subset: canary
+          weight: 100
+
+    # If the request comes from app-service STABLE -> go to model STABLE
+    - match:
+        - sourceLabels:
+            app: app-service
+            version: stable
+      route:
+        - destination:
+            host: model-service
+            subset: stable
+          weight: 100
+
+    # all other traffic to model STABLE
+    - route:
+        - destination:
+            host: model-service
+            subset: stable
+          weight: 100
+{{- end }}
