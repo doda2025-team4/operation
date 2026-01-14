@@ -68,20 +68,37 @@
         state: present
       when: adminconf.stat.exists
 
+    - name: Install pip
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+
+    - name: Install Python libraries for Kubernetes
+      ansible.builtin.pip:
+        name:
+          - kubernetes
+          - PyYAML
+          - jsonpatch
+        state: present
+        break_system_packages: yes
+
     - name: Apply Flannel CNI
-      ansible.builtin.command: >
-        kubectl apply -f /home/vagrant/kube-flannel.yml
-        --kubeconfig=/etc/kubernetes/admin.conf
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/kube-flannel.yml
+        kubeconfig: /etc/kubernetes/admin.conf
       when: adminconf.stat.exists
 
     - name: Wait for Flannel daemonset to exist
-      ansible.builtin.command: >
-        kubectl --kubeconfig=/etc/kubernetes/admin.conf
-        get daemonset kube-flannel-ds -n kube-flannel
+      kubernetes.core.k8s_info:
+        kind: DaemonSet
+        name: kube-flannel-ds
+        namespace: kube-flannel
+        kubeconfig: /etc/kubernetes/admin.conf
       register: flannel_ds_check
       retries: 10
       delay: 1
-      until: flannel_ds_check.rc == 0
+      until: flannel_ds_check.resources | length > 0
       when: adminconf.stat.exists
     
     # Step 16: Install Helm
