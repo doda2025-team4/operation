@@ -209,7 +209,7 @@ The monitoring with Prometheus can be verified by:
   - (repeat the request a few times to increase counters)
 
 - Port-forward Prometheus:
-  - `kubectl port-forward svc/prometheus-sms-app-monitoring-prometheus 9090:9090 -n doda`
+  - `kubectl port-forward svc/sms-app-monitoring-prometheus 9090:9090 -n doda`
 
 - Open the Prometheus UI:
   - Navigate to: `http://localhost:9090` → tab **"Graph"**
