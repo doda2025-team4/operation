@@ -154,3 +154,7 @@
 
 - Andrea:
   - I have worked on two first drafts for the proposed extension in [PR 67](https://github.com/doda2025-team4/operation/pull/67)
+
+### Week Q2.8 (Jan 12+)
+- Poyraz:
+  - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
