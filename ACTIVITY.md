@@ -158,6 +158,9 @@
  - Kasper":
   - I have expanded the canary version and created the canary branches for the app and model-service: [PR 14](https://github.com/doda2025-team4/app/pull/14) and [PR 8](https://github.com/doda2025-team4/model-service/pull/8)
 
+- Noky:
+  - I investigated an issue that initially lead to an issue parsing one of the YAML files for the istio virtual service, this turned out to be something bigger regarding the installation of the app on the vagrant cluster and our instructions to do so. This is all fixed i;n [PR66](https://github.com/doda2025-team4/operation/pull/66)
+
 ### Week Q2.8 (Jan 12+)
 - Poyraz:
   - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
