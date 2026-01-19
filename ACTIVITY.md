@@ -155,9 +155,15 @@
 - Andrea:
   - I have worked on two first drafts for the proposed extension in [PR 67](https://github.com/doda2025-team4/operation/pull/67)
 
+ - Kasper":
+  - I have expanded the canary version and created the canary branches for the app and model-service: [PR 14](https://github.com/doda2025-team4/app/pull/14) and [PR 8](https://github.com/doda2025-team4/model-service/pull/8)
+
 ### Week Q2.8 (Jan 12+)
 - Poyraz:
   - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
 
 - Andrea:
   - I have worked on fixing some errors and adding the missing features needed for the excellent implementation of the Sticky Session in [PR 69](https://github.com/doda2025-team4/operation/pull/69)
+ 
+ - Kasper:
+  - I have fixed a deployment reproducibility bug: [PR 65](https://github.com/doda2025-team4/operation/pull/65)
