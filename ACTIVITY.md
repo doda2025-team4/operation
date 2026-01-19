@@ -170,3 +170,6 @@
  
  - Kasper:
   - I have fixed a deployment reproducibility bug: [PR 65](https://github.com/doda2025-team4/operation/pull/65)
+
+- Noky:
+  - This week was a bit busy for me, so I worked on extending the functionality that I added in [PR50](https://github.com/doda2025-team4/operation/pull/50), since that was not merged yet.
