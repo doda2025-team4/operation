@@ -173,3 +173,7 @@
 
 - Noky:
   - This week was a bit busy for me, so I worked on extending the functionality that I added in [PR50](https://github.com/doda2025-team4/operation/pull/50), since that was not merged yet.
+
+- Mohammed:
+  - Fixed inventory.cfg to use VM IPs instead of localhost addresses for proper Ansible provisioning. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
+
