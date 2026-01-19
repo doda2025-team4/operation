@@ -2,3 +2,5 @@
 admin.conf
 model-storage/
 ansible/inventory.cfg
+helm_chart/Chart.lock
+helm_chart/charts/

@@ -209,7 +209,7 @@ The monitoring with Prometheus can be verified by:
   - (repeat the request a few times to increase counters)
 
 - Port-forward Prometheus:
-  - `kubectl port-forward svc/prometheus-sms-app-monitoring-prometheus 9090:9090 -n doda`
+  - `kubectl port-forward svc/sms-app-monitoring-prometheus 9090:9090 -n doda`
 
 - Open the Prometheus UI:
   - Navigate to: `http://localhost:9090` → tab **"Graph"**
@@ -245,3 +245,67 @@ Grafana can be verified as follows:
     - Navigate to `http://localhost:8080/sms`
   - Send a few SMS prediction requests to generate traffic
   - In Grafana, open one of the dashboards and verify that the graphs update accordingly
+
+### A4
+
+#### Deployment
+The deployment consists of:
+- **Istio IngressGateway (istio-gateway):** Entry point for all external HTTP traffic into the cluster
+- **Istio VirtualService (istio-virtualservice):** Defines how incoming traffic is routed to the application and the canary traffic split
+- **Istio DestinationRules (istio-destinationrule)**: Defines the stable and canary for app-service, and helps maintain consistent routing between versions
+- **app-service**: The externally available application
+- **model-service**: The internal backend service
+- **Prometheus & Grafana**: Collects and and visualize application metrics
+
+Istio is installed during provisioning is referenced by the Helm chart, which deploys all resources.
+
+#### Which hostnames/ports/paths/headers/... are required to access your application?
+- **Hostnames:** dodateam4-app, configured via Helm in values.yaml
+- **Port:** By default on port 8080, can be configured for external access
+- **Path:** /sms
+- **Headers:** None headers are required for normal usage
+
+#### Which path does a typical request take through your deployment?
+- **User Request:** User hits the app via http://sms.local/sms
+- **IngressGateway:** Traffic enters through the Istio IngressGateway
+- **VirtualService:** Request is routed based on the 90/10 split defined in istio-virtualservice.yaml
+- **DestinationRule:** Ensures the request is directed to stable or canary
+
+####  Where is the 90/10 split configured? Where is the routing decision taken
+- The 90/10 split defined in istio-virtualservice.yaml, from Values.istio.canary.weight. 90% stable, 10% canary
+
+#### Sticky Sessions
+- Sticky sessions ensure that once a user is routed to a specific version (stable or canary), they continue to see that version on subsequent requests.
+- 1. The first request is routed based on the configured weights (90/10)
+- 2. A cookie is set (`user-experiment`) to  identify the selected subset
+- 3. Subsequent requests from the same user are then routed to the same subset
+- 4. By default the Cookie TTL is 30 minutes
+
+**Configuration in `values.yaml`:**
+- `istio.canary.cookieName` - Name of the sticky session cookie
+- `istio.canary.cookieTtl` - Cookie time-to-live
+
+
+#### Verification
+
+```bash
+kubectl get gateway,virtualservice,destinationrule
+kubectl get pods -l app=app-service --show-labels
+```
+
+- Test Normal Request
+```bash
+curl -v -H "Host: sms.local" http://<INGRESS_IP>/sms/
+```
+
+- Test Sticky Sessions
+```bash
+# First request (saves cookie)
+curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+
+# Subsequent requests (should hit same version)
+curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+```
+
+####  Which component implements the additional use case
+- The additional use case is implemented through Istio VirtualService and DestinationRules. TODO

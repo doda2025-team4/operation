@@ -119,3 +119,57 @@
 - Kasper:
   - I have worked on changing our versioning logic to allow the main branch in model-service and app to have both a latest release and a prerelease: [PR 13](https://github.com/doda2025-team4/app/pull/13) and [PR 7](https://github.com/doda2025-team4/model-service/pull/7).
     - This needs to be done to release both versions of the application to do A/B testing.
+   
+### Week Q2.6 (Dec 15+)  
+
+- Mohammed:
+  - Added Vagrant trigger to auto-generate inventory.cfg with active nodes. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
+
+- Andrea:
+  - I helped reviewing the open PRs. I couldn’t open a PR myself this week, but I will compensate in week 7
+
+- Joshua:
+  - In `operation`: [PR 51](https://github.com/doda2025-team4/operation/pull/51).
+  - I have added the outline and documentation for what we have done on A4 so far
+
+- Poyraz:
+  - Implemented the base part of rate limiting for additional use case. [PR 53](https://github.com/doda2025-team4/operation/pull/53).
+
+- Kasper:
+  - I have completed changing our versioning logic to allow the main branch in model-service and app to have both a latest release and a prerelease: [PR 13](https://github.com/doda2025-team4/app/pull/13) and [PR 7](https://github.com/doda2025-team4/model-service/pull/7).
+    - This was harder than anticipated, but it is now implemented for all repos except operation.
+   
+- Noky:
+  - I have worked on [PR50](https://github.com/doda2025-team4/operation/pull/50) to implement some builtin in modules instead of using i.e. a kubectl command
+
+### Week Q2.7 (Jan 5+) 
+- Joshua:
+  - In `operation`: [PR 58](https://github.com/doda2025-team4/operation/pull/58).
+  - I have made final updates to A2 mostly relating to the package versions of steps 9 and 10
+  - In `operation`: [PR 59](https://github.com/doda2025-team4/operation/pull/59).
+  - I have addeed additional documentation regarding sticky sessions and verifications to match previous weeks
+
+- Poyraz:
+  - Changed the rate limiting to per user based on header id. Also looked into other ways of doing it but I could only think of doing it based on JWT auth which I dont know if it is in the scope of the assignment. It might be better to get clarification on what needs to be done in order to get the per user requirement. [PR 64](https://github.com/doda2025-team4/operation/pull/64).
+
+- Andrea:
+  - I have worked on two first drafts for the proposed extension in [PR 67](https://github.com/doda2025-team4/operation/pull/67)
+
+ - Kasper":
+  - I have expanded the canary version and created the canary branches for the app and model-service: [PR 14](https://github.com/doda2025-team4/app/pull/14) and [PR 8](https://github.com/doda2025-team4/model-service/pull/8)
+
+- Noky:
+  - I investigated an issue that initially lead to an issue parsing one of the YAML files for the istio virtual service, this turned out to be something bigger regarding the installation of the app on the vagrant cluster and our instructions to do so. This is all fixed i;n [PR66](https://github.com/doda2025-team4/operation/pull/66)
+
+### Week Q2.8 (Jan 12+)
+- Poyraz:
+  - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
+
+- Andrea:
+  - I have worked on fixing some errors and adding the missing features needed for the excellent implementation of the Sticky Session in [PR 69](https://github.com/doda2025-team4/operation/pull/69)
+ 
+ - Kasper:
+  - I have fixed a deployment reproducibility bug: [PR 65](https://github.com/doda2025-team4/operation/pull/65)
+
+- Noky:
+  - This week was a bit busy for me, so I worked on extending the functionality that I added in [PR50](https://github.com/doda2025-team4/operation/pull/50), since that was not merged yet.
