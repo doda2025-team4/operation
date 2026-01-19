@@ -158,3 +158,6 @@
 ### Week Q2.8 (Jan 12+)
 - Poyraz:
   - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
+
+- Andrea:
+  - I have worked on fixing some errors and adding the missing features needed for the excellent implementation of the Sticky Session in [PR 69](https://github.com/doda2025-team4/operation/pull/69)
