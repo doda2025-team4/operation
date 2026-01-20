@@ -1,0 +1,14 @@
+{{- if and .Values.istio.enabled .Values.istio.globalRateLimit.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ratelimit-config
+data:
+  config.yaml: |
+    domain: {{ .Values.istio.globalRateLimit.domain }}
+    descriptors:
+      - key: USER
+        rate_limit:
+          unit: {{ .Values.istio.globalRateLimit.unit }}
+          requests_per_unit: {{ .Values.istio.globalRateLimit.requestsPerUnit }}
+{{- end }}
