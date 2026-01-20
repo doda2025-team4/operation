@@ -5,9 +5,9 @@ metadata:
   name: app-virtualservice
 spec:
   hosts:
-    - {{ .Values.istio.hosts.stable | quote }}
+  - {{ .Values.istio.hosts.stable | quote }}
   gateways:
-    - {{ .Values.istio.gateway.name }}
+  - {{ .Values.istio.gateway.name | quote }}
   http:
     # If cookie indicates canary, route to canary subset
     - match:

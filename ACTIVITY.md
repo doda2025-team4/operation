@@ -151,3 +151,29 @@
 
 - Poyraz:
   - Changed the rate limiting to per user based on header id. Also looked into other ways of doing it but I could only think of doing it based on JWT auth which I dont know if it is in the scope of the assignment. It might be better to get clarification on what needs to be done in order to get the per user requirement. [PR 64](https://github.com/doda2025-team4/operation/pull/64).
+
+- Andrea:
+  - I have worked on two first drafts for the proposed extension in [PR 67](https://github.com/doda2025-team4/operation/pull/67)
+
+ - Kasper":
+  - I have expanded the canary version and created the canary branches for the app and model-service: [PR 14](https://github.com/doda2025-team4/app/pull/14) and [PR 8](https://github.com/doda2025-team4/model-service/pull/8)
+
+- Noky:
+  - I investigated an issue that initially lead to an issue parsing one of the YAML files for the istio virtual service, this turned out to be something bigger regarding the installation of the app on the vagrant cluster and our instructions to do so. This is all fixed i;n [PR66](https://github.com/doda2025-team4/operation/pull/66)
+
+### Week Q2.8 (Jan 12+)
+- Poyraz:
+  - Fixed hosts to "ctrl" in finalization.yaml and added documentation regarding rate limiting. [PR 70](https://github.com/doda2025-team4/operation/pull/70)
+
+- Andrea:
+  - I have worked on fixing some errors and adding the missing features needed for the excellent implementation of the Sticky Session in [PR 69](https://github.com/doda2025-team4/operation/pull/69)
+ 
+ - Kasper:
+  - I have fixed a deployment reproducibility bug: [PR 65](https://github.com/doda2025-team4/operation/pull/65)
+
+- Noky:
+  - This week was a bit busy for me, so I worked on extending the functionality that I added in [PR50](https://github.com/doda2025-team4/operation/pull/50), since that was not merged yet.
+
+- Mohammed:
+  - Fixed inventory.cfg to use VM IPs instead of localhost addresses for proper Ansible provisioning. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
+

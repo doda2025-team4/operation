@@ -82,6 +82,13 @@ istio:
     selectorLabelKey: istio
     selectorLabelValue: ingressgateway
 
+  globalRateLimit:
+    enabled: true
+    istioNamespace: istio-system
+    domain: sms-ratelimit
+    requestsPerUnit: 10
+    unit: minute
+
   gateway:
     name: sms-gateway
 
