@@ -120,13 +120,8 @@
           - helm
 
     # Step 17: Install Helm diff plugin
-    - name: Check if helm-diff plugin is already installed
+    - name: Ensure that helm_diff plugin is installed
       become: false
-      ansible.builtin.command: helm plugin list
-      register: helm_plugins
-      changed_when: false
-
-    - name: Install helm diff plugin
-      become: false
-      ansible.builtin.command: helm plugin install https://github.com/databus23/helm-diff
-      when: "'diff' not in helm_plugins.stdout" 
+      kubernetes.core.helm_plugin:
+        state: present
+        plugin_path: https://github.com/databus23/helm-diff
