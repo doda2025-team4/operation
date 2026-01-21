@@ -353,5 +353,45 @@ curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
 curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
 ```
 
-####  Which component implements the additional use case
-- The additional use case is implemented through Istio VirtualService and DestinationRules. TODO
+### Additional Use Case - Rate Limiting
+The additional use case of rate limiting incoming requests was chosen for our project. Global rate limiting is implemented using **Istio + Envoy** and uses **Redis** to store the rate limit state across the cluster. It is evaluated at the Istio IngressGateway **before** canary routing and sticky session logic are applied.
+
+### How rate limiting works
+1. A client sends a request to the application via the Istio IngressGateway.
+2. Envoy extracts the `x-user-id` HTTP header from the request.
+3. Envoy synchronously queries the Rate Limit Service via gRPC.
+4. Redis is used to check whether the request exceeds the allowed quota.
+5. Decision:
+   * If allowed → request proceeds to normal routing (VirtualService / DestinationRule).
+   * If exceeded → Envoy immediately returns **HTTP 429 (Too Many Requests)**.
+
+Rate limiting is therefore **global, centralized, and enforced at ingress**.
+
+**Important:** If the `x-user-id` header is not provided, all such requests are grouped under the same rate-limit bucket.
+
+### Rate limit policy
+The rate limit policy is defined via `values.yaml` and rendered into a ConfigMap:
+* **10 requests per minute**
+* **per user**, identified by the `x-user-id` request header
+* **cluster-wide**, across all pods and replicas
+
+### Verification
+- Allowed requests:
+```bash
+curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+```
+Expected response: **HTTP 200**
+
+- Exceed rate limit:
+```bash
+for i in {1..11}; do
+  curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+done
+```
+Expected response: **HTTP 429**
+
+- Different user (separate quota):
+```bash
+curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms
+```
+Expected response: **HTTP 200**
