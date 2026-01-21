@@ -1,5 +1,5 @@
 ---
-- hosts: ctrl
+- hosts: all
   become: yes
 
   tasks:
