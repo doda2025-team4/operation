@@ -292,6 +292,21 @@ Grafana can be verified as follows:
   - Send a few SMS prediction requests to generate traffic
   - In Grafana, open one of the dashboards and verify that the graphs update accordingly
 
+#### Alerting
+
+View the alertmanager:
+  - Port-forward the alertmanager:
+    - `kubectl port-forward svc/sms-app-monitoring-alertmanager 9093:9093 -n doda`
+  - Open the UI:
+    - Navigate to `http://localhost:9093/`
+
+To receive an alert:
+  - Replace `replace@me.please` in `values.yml` with the email address you want to receive the alert on
+  - Update the helm install
+  - Submit more than or equal to 10 sms prediction requests in the application in a minute
+  - Wait a few seconds
+  - You should now have received an email
+
 ### A4
 
 #### Deployment
