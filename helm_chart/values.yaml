@@ -39,17 +39,42 @@ ingress:
       path: /
   tls: []
 
-alerting:
-  enabled: true
-  alertmanagerImage: "quay.io/prometheus/alertmanager:v0.27.0"
-  smtp:
-    host: "smtp.gmail.com:587"
-    username: "temp@tempmail.com"
-    # password is stored in secret-config Secret as SMTP_PASSWORD
-    from: "placeholder@tempmail.com"
-    to: "placeholder@tempmail.com"
 monitoring:
   enabled: true
+  
+  alertmanager:
+    enabled: true # check if needed
+    alertmanagerSpec:
+      secrets:
+        - alertmanager-smtp
+    config:
+      global:
+        resolve_timeout: 5m
+        smtp_smarthost: "smtp.gmail.com:587"
+        smtp_from: "doda.team4.alerts@gmail.com"
+        smtp_auth_username: "doda.team4.alerts@gmail.com"
+        smtp_auth_password_file: "/etc/alertmanager/secrets/alertmanager-smtp/SMTP_PASSWORD"
+      route:
+        receiver: "email-alert"
+        group_by:
+          - namespace
+          - alertname
+        group_wait: 5s
+        group_interval: 1m
+        repeat_interval: 5m
+        routes:
+          - matchers:
+              - namespace="doda"
+            receiver: "email-alert"
+          - matchers:
+              - namespace!="doda"
+            receiver: "null"
+      receivers:
+        - name: "null"
+        - name: "email-alert"
+          email_configs:
+            - to: "replace@me.please"
+              send_resolved: true
 
 istio:
   enabled: true
