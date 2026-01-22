@@ -16,6 +16,22 @@ The experiment will be designed as follows:
 
 There will be versions both the application and the model service that will be deployed. One will have the length verification and be labeled as the canary, while the other will not have the length verification and won't have a specific label.
 
-The routing will be setup such that the canary app only sends requests to the canary model service, while the normal app only sends requests to the normal model service. The split of the traffic will be 90/10, meaning that 90% of the users will use the normal app and 10% will use the canary app.
+To see if the canary version will have fewer requests per second, we will send a sequence of requests containing a message from a predefined set. The messages will vary in length, some being shorter than 6 characters and some being longer. Both of the versions will receive the same sequence of requests.
+
+Of the set of messages, half of them will be shorter than 6 characters, and the other half will be longer than 6 characters. This way we can see how the length verification affects the number of requests that reach the backend.
+
+The sequence of requests will be of length 200.
+
+## Results
+After running the experiment, we observed the following results:
+
+The control version had peaks of 3.64 requests per second for every run of the experiment. The canary version had peaks between 1.71 and 1.85 requests per second.
+
+This indicates that the canary version received roughly half the amount of messages compared to the normal version. This aligns with the setup of our experiment, where half the possible messages were shorter than 6 characters and thus filtered out by the length verification feature. It varies a bit due to the randomness of the message selection.
+
+## Conclusion
+Based on the results of the experiment, we can conclude that our hypothesis was correct. The implementation of the message length verification feature did indeed reduce the number of requests per second that the backend received.
+
+It is noteworthy that the real world reduction would depend on the actual distribution of the message lengths sent by the users. But this experiment has shown that the messages that are short, will not reach the backend, thus reducing the load on it.
 
 
