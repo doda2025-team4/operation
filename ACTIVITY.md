@@ -177,3 +177,6 @@
 - Mohammed:
   - Fixed inventory.cfg to use VM IPs instead of localhost addresses for proper Ansible provisioning. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
 
+### Week Q2.9 (Jan 19+)
+- Kasper:
+  - I have implemented working email alerts using the Prometheus Alertmanager in `operation`: [PR 74](https://github.com/doda2025-team4/operation/pull/74).
