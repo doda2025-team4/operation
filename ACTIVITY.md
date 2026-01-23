@@ -180,3 +180,6 @@
 ### Week Q2.9 (Jan 19+)
 - Kasper:
   - I have implemented working email alerts using the Prometheus Alertmanager in `operation`: [PR 74](https://github.com/doda2025-team4/operation/pull/74).
+
+- Poyraz:
+  - I have worked on the deployment.md file which is a seperate document with high level details and no assignment specific testing or verification content. [PR 77](https://github.com/doda2025-team4/operation/pull/77).
