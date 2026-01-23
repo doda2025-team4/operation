@@ -16,7 +16,7 @@
 
     # Step 5
     - name: Disable swap at runtime
-      ansible.builtin.shell: swapoff -a
+      ansible.builtin.command: swapoff -a
 
     - name: Remove swap from /etc/fstab
       ansible.builtin.lineinfile:
