@@ -183,3 +183,6 @@
 
 - Poyraz:
   - I have worked on the deployment.md file which is a seperate document with high level details and no assignment specific testing or verification content. [PR 77](https://github.com/doda2025-team4/operation/pull/77).
+
+- Andrea:
+  - I have worked on writing the final extension proposal for A4 in [PR 79](https://github.com/doda2025-team4/operation/pull/79)
