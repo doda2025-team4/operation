@@ -124,15 +124,62 @@ Istio itself is installed during cluster provisioning and is referenced by the H
 
 ---
 
-### [DIAGRAM PLACEHOLDER: Full Deployment Architecture]
+```mermaid
+graph TB
+    subgraph External
+        Client[Client]
+    end
 
-Include:
-- cluster boundary
-- namespaces
-- Istio components
-- application workloads
-- rate limiting and monitoring stacks
-- communication paths
+    subgraph Cluster
+        subgraph istio-system
+            IGW[Istio IngressGateway]
+            RLS[Rate Limit Service]
+            Redis[(Redis)]
+        end
+
+        subgraph doda
+            subgraph Istio
+                GW[Gateway]
+                VS[VirtualService]
+                DR[DestinationRule]
+            end
+
+            subgraph App
+                AppStable[app-stable Pod]
+                AppCanary[app-canary Pod]
+            end
+            AppSvc[app-service]
+
+            subgraph Model
+                ModelStable[model-stable Pod]
+                ModelCanary[model-canary Pod]
+            end
+            ModelSvc[model-service]
+
+            subgraph Monitoring
+                Prometheus[Prometheus]
+                Grafana[Grafana]
+            end
+        end
+    end
+
+    Client --> IGW
+    IGW --> RLS
+    RLS --> Redis
+    IGW --> GW
+    GW --> VS
+    VS --> DR
+    DR --> AppStable
+    DR --> AppCanary
+    AppStable --> AppSvc
+    AppCanary --> AppSvc
+    AppSvc --> ModelSvc
+    ModelSvc --> ModelStable
+    ModelSvc --> ModelCanary
+    Prometheus -.-> AppSvc
+    Prometheus -.-> ModelSvc
+    Grafana -.-> Prometheus
+```
 
 ---
 
@@ -163,16 +210,33 @@ All external traffic enters through the Istio IngressGateway.
 
 ---
 
-### [DIAGRAM PLACEHOLDER: End-to-End Request Flow]
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant IGW as IngressGateway
+    participant RLS as Rate Limit Service
+    participant VS as VirtualService
+    participant AS as app-stable
+    participant AC as app-canary
+    participant MS as model-service
 
-Include:
-- client
-- IngressGateway
-- rate limiting stage
-- VirtualService routing
-- stable + canary frontend pods
-- model-service pod
-- response path
+    C->>IGW: POST /sms
+    IGW->>RLS: Check rate limit
+    RLS-->>IGW: Allow/Deny
+    IGW->>VS: Route request
+
+    alt 90% traffic
+        VS->>AS: Forward to stable
+        AS->>MS: Classify SMS
+        MS-->>AS: Result
+        AS-->>C: Response
+    else 10% traffic
+        VS->>AC: Forward to canary
+        AC->>MS: Classify SMS
+        MS-->>AC: Result
+        AC-->>C: Response
+    end
+```
 
 ---
 
@@ -202,13 +266,24 @@ To ensure experimental consistency:
 
 ---
 
-### [DIAGRAM PLACEHOLDER: Canary Routing with Sticky Sessions]
+```mermaid
+flowchart TD
+    subgraph First Request
+        R1[Request without cookie] --> VS1[VirtualService]
+        VS1 --> W{90/10 Weight}
+        W -->|90%| S1[Stable]
+        W -->|10%| C1[Canary]
+        S1 --> Cookie1[Set cookie: user-experiment=stable]
+        C1 --> Cookie2[Set cookie: user-experiment=canary]
+    end
 
-Include:
-- VirtualService with weighted routes
-- cookie assignment
-- stable and canary subsets
-- repeated requests following the same path
+    subgraph Subsequent Requests
+        R2[Request with cookie] --> VS2[VirtualService]
+        VS2 --> Check{Check cookie}
+        Check -->|user-experiment=stable| S2[Stable]
+        Check -->|user-experiment=canary| C2[Canary]
+    end
+```
 
 ---
 
@@ -233,15 +308,18 @@ This ensures:
 
 ---
 
-### [DIAGRAM PLACEHOLDER: Rate Limiting at Ingress]
-
-Include:
-- client
-- IngressGateway
-- rate limit filter
-- rate limit service
-- redis
-- allow / reject paths
+```mermaid
+flowchart LR
+    C[Client] --> IGW[IngressGateway]
+    IGW --> EF[Envoy Filter]
+    EF --> Extract[Extract x-user-id header]
+    Extract --> RLS[Rate Limit Service]
+    RLS --> Redis[(Redis)]
+    Redis --> RLS
+    RLS --> Decision{Quota exceeded?}
+    Decision -->|No| Allow[Continue to VirtualService]
+    Decision -->|Yes| Reject[HTTP 429 Too Many Requests]
+```
 
 ---
 
