@@ -2,9 +2,9 @@
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: app-destinationrule
+  name: model-destinationrule
 spec:
-  host: app-service
+  host: model-service
   subsets:
     - name: stable
       labels:

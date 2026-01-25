@@ -9,14 +9,43 @@ spec:
   gateways:
   - {{ .Values.istio.gateway.name | quote }}
   http:
-  - name: primary
-    route:
-    - destination:
-        host: app-service
-        subset: stable
-      weight: {{ sub 100 (.Values.istio.canary.weight | int) }}
-    - destination:
-        host: app-service
-        subset: canary
-      weight: {{ .Values.istio.canary.weight | int }}
+    # If cookie indicates canary, route to canary subset
+    - match:
+        - headers:
+            cookie:
+              regex: ".*{{ .Values.istio.canary.cookieName }}=canary.*"
+      route:
+        - destination:
+            host: app-service
+            subset: canary
+          weight: 100
+    # If cookie indicates canary, route to canary subset
+    - match:
+        - headers:
+            cookie:
+              regex: ".*{{ .Values.istio.canary.cookieName }}=stable.*"
+      route:
+        - destination:
+            host: app-service
+            subset: stable
+          weight: 100
+    # Default routing based on weights then set cookies 
+    - route:
+        - destination:
+            host: app-service
+            subset: stable
+          weight: {{ sub 100 .Values.istio.canary.weight }}
+          headers:
+            response:
+              add:
+                set-cookie: "{{ .Values.istio.canary.cookieName }}=stable; Max-Age={{ .Values.istio.canary.cookieMaxAgeSeconds }}; Path=/; HttpOnly"
+        - destination:
+            host: app-service
+            subset: canary
+          weight: {{ .Values.istio.canary.weight }}
+          headers:
+            response:
+              add:
+                set-cookie: "{{ .Values.istio.canary.cookieName }}=canary; Max-Age={{ .Values.istio.canary.cookieMaxAgeSeconds }}; Path=/; HttpOnly"
 {{- end }}
+
