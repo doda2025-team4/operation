@@ -188,4 +188,8 @@
   - I have worked on writing the final extension proposal for A4 in [PR 79](https://github.com/doda2025-team4/operation/pull/79)
 
 - Mohammed:
-  - Removed hardcoded SMTP password from Helm chart and updated README with manual secret creation instructions for A3 in [PR 80](https://github.com/doda2025-team4/operation/pull/80)
+  - Removed hardcoded SMTP password from Helm chart and updated README with manual secret creation instructions for A3 in [PR 80](https://github.com/doda2025-team4/operation/pull/80).
+ 
+### Week Q2.10 (Jan 26+)
+- Mohammed:
+  - I added Mermaid diagrams to docs/deployment.md for A4 visualization in [PR 81](https://github.com/doda2025-team4/operation/pull/81).
