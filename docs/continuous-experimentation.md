@@ -67,6 +67,15 @@ for i in {1..200}; do
 done
 ```
 
+The above script was run on the provisioned VM, more specifically the CTRL VM.
+
+To run the experiment on the minikube cluster, you need to start a tunnel to the minikube cluster using the command:
+```bash 
+minikube tunnel
+```
+
+The only change needed in the above script is to replace the IP address by `localhost`. Then you can run the script directly on your local machine.
+
 ## Results
 After running the experiment, we observed the following results:
 
