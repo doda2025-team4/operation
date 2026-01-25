@@ -67,7 +67,9 @@ for i in {1..200}; do
 done
 ```
 
-The above script was run on the provisioned VM, more specifically the CTRL VM.
+To run the experiment, you need to have the VM cluster provisioned and the applications deployed using the instructions in the deployment guide. When the cluster is running, follow the documentation to get access to the grafana dashboard to monitor the requests per second metric. Now you can run the above script on the CTRL VM to send the requests to both versions of the application. When the grafana dashboard is refreshed, you will be able to see the requests per second for both versions.
+
+If you want to change the number of total requests sent, you can modify the value in the for loop to the desired amount.
 
 To run the experiment on the minikube cluster, you need to start a tunnel to the minikube cluster using the command:
 ```bash 
