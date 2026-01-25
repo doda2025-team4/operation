@@ -67,16 +67,17 @@ for i in {1..200}; do
 done
 ```
 
-To run the experiment, you need to have the VM cluster provisioned and the applications deployed using the instructions in the deployment guide. When the cluster is running, follow the documentation to get access to the grafana dashboard to monitor the requests per second metric. Now you can run the above script on the CTRL VM to send the requests to both versions of the application. When the grafana dashboard is refreshed, you will be able to see the requests per second for both versions.
+To run the experiment, you need to have the VM cluster provisioned and the applications deployed using the instructions in the deployment guide. When the cluster is running, follow the documentation to get access to the grafana dashboard to monitor the requests per second metric. Navigate to the `DODA - A3 Application Monitoring` dashboard. Now you can run the above script on the CTRL VM to send the requests to both versions of the application. When the grafana dashboard is refreshed, you will be able to see the requests per second for both versions. Not that the colours in the graph might differ from the ones shown in our image below.
 
 If you want to change the number of total requests sent, you can modify the value in the for loop to the desired amount.
 
-To run the experiment on the minikube cluster, you need to start a tunnel to the minikube cluster using the command:
+
+To run the experiment on the minikube cluster, make sure to have the cluster deployed and that the application is installed. After that you need to execute the following command:
 ```bash 
-minikube tunnel
+kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
 ```
 
-The only change needed in the above script is to replace the IP address by `localhost`. Then you can run the script directly on your local machine.
+The only change needed in the above script is to replace the IP address by `localhost:8080`. Then you can run the script directly on your local machine.
 
 ## Results
 After running the experiment, we observed the following results:
