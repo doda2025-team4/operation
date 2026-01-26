@@ -298,6 +298,28 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    ```
 
 
+- **Shared VirtualBox Storage**  
+  All VMs mount the same VirtualBox shared folder as `/mnt/shared`. The Helm chart mounts this path into the model-service as a `hostPath` volume so model artifacts persist across pod restarts and across nodes. Stable and canary use separate subdirectories (`/mnt/shared/model-stable` and `/mnt/shared/model-canary`) to avoid overwriting `model.joblib` / `preprocessor.joblib`.  
+  Verification:  
+  - Provision the VMs.  
+  - On **each VM** verify the shared folder is mounted:
+    - `mount | grep /mnt/shared`
+    - `ls -la /mnt/shared`
+
+  - Verify that model pods mount the volume:
+    - `kubectl -n doda describe deploy model-deployment | sed -n '/Mounts:/,/Conditions:/p'`
+    - `kubectl -n doda describe deploy model-deployment-canary | sed -n '/Mounts:/,/Conditions:/p'`
+
+  - Verify stable model downloads on first start (should say **Downloading**):
+    - `kubectl -n doda logs deploy/model-deployment -c model-container | egrep "\[model-service\] (Downloading|Using existing)"`
+    
+  - Scale stable model to create a second pod on another node:
+    - `kubectl -n doda scale deploy/model-deployment --replicas=2`
+    - `kubectl -n doda get pods -l app=model-service -o wide`
+
+  - Verify the **new** stable pod reuses the existing artifacts (should show **Using existing** instead of **Downloading**):
+    - `kubectl -n doda logs <NEW_STABLE_POD_NAME> -c model-container | egrep "\[model-service\] (Downloading|Using existing)"`
+
 #### Prometheus
 - **Custom Prometheus Metrics**  
   App service exposes metrics at `/metrics` endpoint. Metrics are defined in in `app/src/main/java/com/team04/app/MetricsConfig.java`: `sms_active_requests` (Gauge), `sms_predictions_total` (Counter), `sms_prediction_latency` (Histogram).  
