@@ -274,6 +274,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    cd helm_chart
    helm dependency update .
    kubectl create namespace doda
+   helm install sms-app . -n doda
 
 
 #### Prometheus
