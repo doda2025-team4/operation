@@ -250,7 +250,12 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
    ```
 
-4. **Install the Helm chart:**
+4. **Enable Istio sidecar injection for the namespace:**
+   ```bash
+   kubectl label namespace doda istio-injection=enabled --overwrite
+   ```
+
+5. **Install the Helm chart:**
    ```bash
    cd helm_chart
    helm dependency update .
@@ -280,11 +285,17 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
    ```
 
-4. **Install the Helm chart:**
+4. **Enable Istio sidecar injection for the namespace:**
+   ```bash
+   kubectl label namespace doda istio-injection=enabled --overwrite
+   ```
+
+5. **Install the Helm chart:**
    ```bash
    cd helm_chart
    helm dependency update .
    helm install sms-app . -n doda
+   ```
 
 
 #### Prometheus
