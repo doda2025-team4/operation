@@ -206,11 +206,16 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    export KUBECONFIG=YOUR_PATH
    ```
 
-3. **Install the Helm chart:**
+3. **Create the SMTP password secret:**
+   ```bash
+   kubectl create namespace doda
+   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   ```
+
+4. **Install the Helm chart:**
    ```bash
    cd helm_chart
    helm dependency update .
-   kubectl create namespace doda
    helm install sms-app . -n doda
    ```
 
@@ -231,11 +236,16 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    cd ..
    ```
 
-3. **Install the Helm chart:**
+3. **Create the SMTP password secret:**
+   ```bash
+   kubectl create namespace doda
+   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   ```
+
+4. **Install the Helm chart:**
    ```bash
    cd helm_chart
    helm dependency update .
-   kubectl create namespace doda
    helm install sms-app . -n doda
    ```
 
