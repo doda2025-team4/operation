@@ -209,7 +209,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
 3. **Create the SMTP password secret:**
    ```bash
    kubectl create namespace doda
-   kubectl create secret generic secret-config --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
    ```
 
 4. **Install the Helm chart:**
@@ -239,7 +239,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
 3. **Create the SMTP password secret:**
    ```bash
    kubectl create namespace doda
-   kubectl create secret generic secret-config --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
    ```
 
 4. **Install the Helm chart:**
