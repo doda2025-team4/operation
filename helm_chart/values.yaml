@@ -45,6 +45,11 @@ model:
     type: ClusterIP
     port: 8081
 
+smtpSecret:
+  create: false
+  name: alertmanager-smtp
+  smtpPassword: ""
+
 ingress:
   enabled: false
   className: ""
