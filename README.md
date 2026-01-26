@@ -298,7 +298,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    ```
 
 
-- **Shared VirtualBox Storage**  
+**Shared VirtualBox Storage**  
   All VMs mount the same VirtualBox shared folder as `/mnt/shared`. The Helm chart mounts this path into the model-service as a `hostPath` volume so model artifacts persist across pod restarts and across nodes. Stable and canary use separate subdirectories (`/mnt/shared/model-stable` and `/mnt/shared/model-canary`) to avoid overwriting `model.joblib` / `preprocessor.joblib`.  
   Verification:  
   - Provision the VMs.  
@@ -312,7 +312,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
 
   - Verify stable model downloads on first start (should say **Downloading**):
     - `kubectl -n doda logs deploy/model-deployment -c model-container | egrep "\[model-service\] (Downloading|Using existing)"`
-    
+
   - Scale stable model to create a second pod on another node:
     - `kubectl -n doda scale deploy/model-deployment --replicas=2`
     - `kubectl -n doda get pods -l app=model-service -o wide`
