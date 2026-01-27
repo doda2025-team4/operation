@@ -26,7 +26,7 @@ spec:
           "@type": type.googleapis.com/envoy.extensions.filters.http.ratelimit.v3.RateLimit
           domain: {{ .Values.istio.globalRateLimit.domain | quote }}
           failure_mode_deny: true
-          timeout: 10s
+          timeout: {{ .Values.istio.globalRateLimit.timeout }}
           rate_limit_service:
             grpc_service:
               envoy_grpc:

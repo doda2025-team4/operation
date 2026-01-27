@@ -6,7 +6,7 @@ metadata:
   labels:
     app: app-service  
 spec:
-  type: ClusterIP
+  type: {{ .Values.app.service.type }}
   selector:
     app: app-service
   ports:

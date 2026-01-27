@@ -17,6 +17,8 @@ app:
   service:
     type: ClusterIP
     port: 8080
+    monitoring:
+      interval: 5s
 
 model:
   image:
@@ -113,6 +115,7 @@ istio:
     domain: sms-ratelimit
     requestsPerUnit: 10
     unit: minute
+    timeout: 10s
 
   gateway:
     name: sms-gateway
