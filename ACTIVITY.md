@@ -193,3 +193,6 @@
 ### Week Q2.10 (Jan 26+)
 - Mohammed:
   - I added Mermaid diagrams to docs/deployment.md for A4 visualization in [PR 81](https://github.com/doda2025-team4/operation/pull/81).
+
+- Kasper:
+  - I have fixed an issue where the alertmanager sent an alert of an error that we were not expecting. This error is fixed in [PR 84](https://github.com/doda2025-team4/operation/pull/84).

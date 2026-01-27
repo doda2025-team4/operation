@@ -49,6 +49,12 @@ model:
     stableHostPath: "/mnt/shared/model-stable"
     canaryHostPath: "/mnt/shared/model-canary"
 
+smtpSecret:
+  create: false
+  name: alertmanager-smtp
+  smtpPassword: ""
+  key: SMTP_PASSWORD
+
 ingress:
   enabled: false
   className: ""
@@ -57,42 +63,36 @@ ingress:
       path: /
   tls: []
 
+alerting:
+  enabled: true
+  configName: email-config
+  email:
+    to: "changeme@please.com" # change to your email
+    from: "doda.team4.alerts@gmail.com"
+    smarthost: "smtp.gmail.com:587"
+    username: "doda.team4.alerts@gmail.com"
+    sendResolved: true
+  route:
+    groupBy: ["namespace", "alertname"]
+    groupWait: 5s
+    groupInterval: 1m
+    repeatInterval: 5m
+
 monitoring:
   enabled: true
   
   alertmanager:
     enabled: true # check if needed
     alertmanagerSpec:
-      secrets:
-        - alertmanager-smtp
+      alertmanagerConfigSelector:
+        matchLabels:
+          alertmanagerConfig: sms-app
+      alertmanagerConfigNamespaceSelector: {}
     config:
-      global:
-        resolve_timeout: 5m
-        smtp_smarthost: "smtp.gmail.com:587"
-        smtp_from: "doda.team4.alerts@gmail.com"
-        smtp_auth_username: "doda.team4.alerts@gmail.com"
-        smtp_auth_password_file: "/etc/alertmanager/secrets/alertmanager-smtp/SMTP_PASSWORD"
       route:
-        receiver: "email-alert"
-        group_by:
-          - namespace
-          - alertname
-        group_wait: 5s
-        group_interval: 1m
-        repeat_interval: 5m
-        routes:
-          - matchers:
-              - namespace="doda"
-            receiver: "email-alert"
-          - matchers:
-              - namespace!="doda"
-            receiver: "null"
+        receiver: "null"
       receivers:
         - name: "null"
-        - name: "email-alert"
-          email_configs:
-            - to: "replace@me.please"
-              send_resolved: true
 
   prometheusOperator:
     podAnnotations:
