@@ -208,6 +208,7 @@
 - Noky:
   - I have moved more variables in from the templates to the values.yml file [PR 91](https://github.com/doda2025-team4/operation/pull/91)
   - I have finished my presentation slides
+  - I have updated the documentation slightly after reading through together with Andrea [PR 93](https://github.com/doda2025-team4/operation/pull/93)
 
 - Andrea:
   - I have worked on my presentation slides, implemented virtualbox shared storage in [PR 83](https://github.com/doda2025-team4/operation/pull/83), implemented missing parts for the alert secrets in [PR 87](https://github.com/doda2025-team4/operation/pull/87), implemented missing nginx ingress in [PR 92](https://github.com/doda2025-team4/operation/pull/92).
