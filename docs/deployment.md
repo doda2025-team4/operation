@@ -126,59 +126,67 @@ Istio itself is installed during cluster provisioning and is referenced by the H
 
 ```mermaid
 graph TB
-    subgraph External
-        Client[Client]
+  subgraph External
+    Client[Client]
+  end
+
+  subgraph Cluster
+    subgraph ingress-nginx
+      Nginx[Nginx Ingress Controller]
     end
 
-    subgraph Cluster
-        subgraph istio-system
-            IGW[Istio IngressGateway]
-            RLS[Rate Limit Service]
-            Redis[(Redis)]
-        end
-
-        subgraph doda
-            subgraph Istio
-                GW[Gateway]
-                VS[VirtualService]
-                DR[DestinationRule]
-            end
-
-            subgraph App
-                AppStable[app-stable Pod]
-                AppCanary[app-canary Pod]
-            end
-            AppSvc[app-service]
-
-            subgraph Model
-                ModelStable[model-stable Pod]
-                ModelCanary[model-canary Pod]
-            end
-            ModelSvc[model-service]
-
-            subgraph Monitoring
-                Prometheus[Prometheus]
-                Grafana[Grafana]
-            end
-        end
+    subgraph istio-system
+      IGW[Istio IngressGateway]
+      RLS[Rate Limit Service]
+      Redis[(Redis)]
     end
 
-    Client --> IGW
-    IGW --> RLS
-    RLS --> Redis
-    IGW --> GW
-    GW --> VS
-    VS --> DR
-    DR --> AppStable
-    DR --> AppCanary
-    AppStable --> AppSvc
-    AppCanary --> AppSvc
-    AppSvc --> ModelSvc
-    ModelSvc --> ModelStable
-    ModelSvc --> ModelCanary
-    Prometheus -.-> AppSvc
-    Prometheus -.-> ModelSvc
-    Grafana -.-> Prometheus
+    subgraph doda
+      %% Nginx stable-only entry
+      Ingress["Ingress (Nginx) sms-nginx.local"]
+      AppStableSvc["app-service-stable (Service)"]
+      AppStablePod[app-stable Pod]
+
+      %% Istio experiment entry
+      GW[Gateway]
+      VS[VirtualService]
+      DR[DestinationRule]
+      AppSvc["app-service (Service)"]
+      AppCanaryPod[app-canary Pod]
+
+      %% Model
+      ModelSvc["model-service (Service)"]
+      ModelStablePod[model-stable Pod]
+      ModelCanaryPod[model-canary Pod]
+
+      %% Monitoring
+      Prometheus[Prometheus]
+      Alertmanager[Alertmanager]
+      Grafana[Grafana]
+    end
+  end
+
+  %% Nginx path (stable-only)
+  Client --> Nginx --> Ingress --> AppStableSvc --> AppStablePod
+
+  %% Istio path (experiment)
+  Client --> IGW
+  IGW --> RLS --> Redis
+  IGW --> GW --> VS --> DR --> AppSvc
+  AppSvc --> AppStablePod
+  AppSvc --> AppCanaryPod
+
+  %% App -> Model (same version intent)
+  AppStablePod --> ModelSvc
+  AppCanaryPod --> ModelSvc
+  ModelSvc --> ModelStablePod
+  ModelSvc --> ModelCanaryPod
+
+  %% Monitoring
+  Prometheus -.-> AppSvc
+  Prometheus -.-> ModelSvc
+  Prometheus --> Alertmanager
+  Grafana -.-> Prometheus
 ```
 
 ---
