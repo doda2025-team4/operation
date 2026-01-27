@@ -244,23 +244,6 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    export KUBECONFIG=YOUR_PATH
    ```
 
-3. **Create the SMTP password secret:**
-   ```bash
-   kubectl create namespace doda
-   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
-   ```
-
-4. **Enable Istio sidecar injection for the namespace:**
-   ```bash
-   kubectl label namespace doda istio-injection=enabled --overwrite
-   ```
-
-5. **Install the Helm chart:**
-   ```bash
-   cd helm_chart
-   helm dependency update .
-   helm install sms-app . -n doda
-   ```
 
 ##### Option 2: Deploy to Minikube
 
@@ -279,11 +262,18 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    cd ..
    ```
 
+Once you have your Kubernetes cluster ready (either Vagrant or Minikube), proceed with the following steps to deploy the application:
+
 3. **Create the SMTP password secret:**
    ```bash
    kubectl create namespace doda
-   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   kubectl -n doda create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD="ybsuczpfonhkunqy"
    ```
+
+    Alternative option: let Helm **generate the Secret** by setting `smtpSecret.create=true` and providing the password at install/upgrade by adding the following to the `helm install` command:
+    ```bash
+    --set smtpSecret.create=true --set smtpSecret.smtpPassword='ybsuczpfonhkunqy'
+    ```
 
 4. **Enable Istio sidecar injection for the namespace:**
    ```bash
@@ -296,8 +286,6 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    helm dependency update .
    helm install sms-app . -n doda
    ```
-
-
 #### Prometheus
 - **Custom Prometheus Metrics**  
   App service exposes metrics at `/metrics` endpoint. Metrics are defined in in `app/src/main/java/com/team04/app/MetricsConfig.java`: `sms_active_requests` (Gauge), `sms_predictions_total` (Counter), `sms_prediction_latency` (Histogram).  
