@@ -224,7 +224,7 @@ vagrant up
 
 #### Deployment Options
 
-You can deploy the application to either the **Vagrant cluster** (recommended, with Istio pre-installed) or **Minikube**. To deploy to the Vagrant cluster, you need to have Ansible 2.20+ installed to provision the cluster.
+You can deploy the application to either the **Vagrant cluster** (recommended, with Istio pre-installed) or **Minikube**. To provision the vagrant cluster, you need to have Ansible 2.20+ installed.
 
 ##### Option 1: Deploy to Vagrant Cluster (Recommended)
 
