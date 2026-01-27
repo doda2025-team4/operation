@@ -267,12 +267,12 @@ Once you have your Kubernetes cluster ready (either Vagrant or Minikube), procee
 3. **Create the SMTP password secret:**
    ```bash
    kubectl create namespace doda
-   kubectl create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD=<your-password> -n doda
+   kubectl -n doda create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD="ybsuczpfonhkunqy"
    ```
 
     Alternative option: let Helm **generate the Secret** by setting `smtpSecret.create=true` and providing the password at install/upgrade by adding the following to the `helm install` command:
     ```bash
-    --set smtpSecret.create=true --set smtpSecret.smtpPassword='<PASSWORD>'`
+    --set smtpSecret.create=true --set smtpSecret.smtpPassword='ybsuczpfonhkunqy`
     ```
 
 4. **Enable Istio sidecar injection for the namespace:**
