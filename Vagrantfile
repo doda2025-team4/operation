@@ -25,6 +25,10 @@ write_inventory(INVENTORY_PATH, WORKER_COUNT)
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
 
+  # Shared folder for "Excellent" requirement (mounted on ALL VMs)
+  SHARED_DIR = File.join(__dir__, "shared")
+  Dir.mkdir(SHARED_DIR) unless Dir.exist?(SHARED_DIR)
+
   # Controller VM
   config.vm.define "ctrl" do |ctrl|
     config.trigger.before :up do |trigger|
@@ -34,6 +38,13 @@ Vagrant.configure("2") do |config|
 
     ctrl.vm.hostname = "ctrl"
     ctrl.vm.network "private_network", ip: "192.168.56.100"
+
+     # Mount shared folder on ctrl
+    ctrl.vm.synced_folder SHARED_DIR, "/mnt/shared",
+      type: "virtualbox",
+      owner: "vagrant",
+      group: "vagrant",
+      mount_options: ["dmode=775", "fmode=664"]
 
     ctrl.vm.provider "virtualbox" do |vb|
       vb.memory = CTRL_MEMORY
@@ -46,6 +57,13 @@ Vagrant.configure("2") do |config|
     config.vm.define "node-#{i}" do |node|
       node.vm.hostname = "node-#{i}"
       node.vm.network "private_network", ip: "192.168.56.#{100 + i}"
+
+      # Mount shared folder on worker
+      node.vm.synced_folder SHARED_DIR, "/mnt/shared",
+        type: "virtualbox",
+        owner: "vagrant",
+        group: "vagrant",
+        mount_options: ["dmode=775", "fmode=664"]
 
       node.vm.provider "virtualbox" do |vb|
         vb.memory = WORKER_MEMORY

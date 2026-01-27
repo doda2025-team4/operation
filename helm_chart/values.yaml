@@ -13,10 +13,13 @@ app:
       pullPolicy: IfNotPresent
   hostname: "dodateam4-app"
   env:
+    modelHost: "http://model-service"
     serverPort: 8080
   service:
     type: ClusterIP
     port: 8080
+    monitoring:
+      interval: 5s
 
 model:
   image:
@@ -44,6 +47,10 @@ model:
   service:
     type: ClusterIP
     port: 8081
+  storage:
+    enabled: true
+    stableHostPath: "/mnt/shared/model-stable"
+    canaryHostPath: "/mnt/shared/model-canary"
 
 smtpSecret:
   create: false
@@ -113,6 +120,7 @@ istio:
     domain: sms-ratelimit
     requestsPerUnit: 10
     unit: minute
+    timeout: 10s
 
   gateway:
     name: sms-gateway
@@ -132,3 +140,15 @@ istio:
         labelValue: "1"
         searchNamespace: ALL
 
+ratelimiting:
+  service:
+    ports:
+      http: 8080
+      httpTarget: 8080
+      grpc: 8081
+      grpcTarget: 8081
+      httpDebug: 6070
+      httpDebugTarget: 6070
+
+  deployment:
+    replicas: 1
