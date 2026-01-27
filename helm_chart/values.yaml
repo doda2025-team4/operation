@@ -133,3 +133,15 @@ istio:
         labelValue: "1"
         searchNamespace: ALL
 
+ratelimiting:
+  service:
+    ports:
+      http: 8080
+      httpTarget: 8080
+      grpc: 8081
+      grpcTarget: 8081
+      httpDebug: 6070
+      httpDebugTarget: 6070
+
+  deployment:
+    replicas: 1
