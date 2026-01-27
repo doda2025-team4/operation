@@ -71,13 +71,7 @@ To run the experiment, you need to have the VM cluster provisioned and the appli
 
 If you want to change the number of total requests sent, you can modify the value in the for loop to the desired amount.
 
-
-To run the experiment on the minikube cluster, make sure to have the cluster deployed and that the application is installed. After that you need to execute the following command:
-```bash 
-kubectl port-forward -n istio-system svc/istio-ingressgateway 8080:80
-```
-
-The only change needed in the above script is to replace the IP address by `localhost:8080`. Then you can run the script directly on your local machine.
+This experiment can only be run on the VM cluster and not on the minikube setup.
 
 ## Results
 After running the experiment, we observed the following results:

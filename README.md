@@ -1,8 +1,8 @@
 All repositories belonging to this project are available here:
 
-- **app:** https://github.com/doda2025-team4/app/tree/A2
-- **model-service:** https://github.com/doda2025-team4/model-service/tree/A2
-- **lib-version:** https://github.com/doda2025-team4/lib-version/tree/A2
+- **app:** https://github.com/doda2025-team4/app
+- **model-service:** https://github.com/doda2025-team4/model-service
+- **lib-version:** https://github.com/doda2025-team4/lib-version
 
 Environment variables are both declared in the .env file in this repo and the dockerfiles of app and model-service repositories. If docker-compose is used, the declarations in the dockerfiles are overridden. We wanted to have this design choice to ensure that there are defaults declared in build time as well in case the container was going to be run without the docker-compose.
 
@@ -224,7 +224,7 @@ vagrant up
 
 #### Deployment Options
 
-You can deploy the application to either the **Vagrant cluster** (recommended, with Istio pre-installed) or **Minikube**.
+You can deploy the application to either the **Vagrant cluster** (recommended, with Istio pre-installed) or **Minikube**. To provision the vagrant cluster, you need to have Ansible 2.20+ installed.
 
 ##### Option 1: Deploy to Vagrant Cluster (Recommended)
 
@@ -437,111 +437,3 @@ To receive an alert:
   - Test allowed: `curl -i http://sms.local/sms -H "x-user-id: bob"`  
   - Test exceeded: `for i in {1..11}; do curl -i http://sms.local/sms -H "x-user-id: bob"; done`  
 
-#### Deployment
-The deployment consists of:
-- **Istio IngressGateway (istio-gateway):** Entry point for all external HTTP traffic into the cluster
-- **Istio VirtualService (istio-virtualservice):** Defines how incoming traffic is routed to the application and the canary traffic split
-- **Istio DestinationRules (istio-destinationrule)**: Defines the stable and canary for app-service, and helps maintain consistent routing between versions
-- **app-service**: The externally available application
-- **model-service**: The internal backend service
-- **Prometheus & Grafana**: Collects and and visualize application metrics
-
-Istio is installed during provisioning is referenced by the Helm chart, which deploys all resources.
-
-Implemented in: `operation/helm_chart/templates/istio-gateway.yml`, `operation/helm_chart/templates/istio-virtualservice.yml`, `operation/helm_chart/templates/istio-destinationrule.yml`
-
-**Architecture diagram:**
-"ADD DIAGRAM SHOWING SPLIT HERE"
-
-#### Which hostnames/ports/paths/headers/... are required to access your application?
-- **Hostname:** `sms.local` (Istio IngressGateway)
-- **Port:** `80`
-- **Path:** `/sms`
-- **Headers:** none required; `x-user-id` only for rate limiting tests
-
-#### Which path does a typical request take through your deployment?
-- **User Request:** User hits the app via http://sms.local/sms
-- **IngressGateway:** Traffic enters through the Istio IngressGateway
-- **VirtualService:** Request is routed based on the 90/10 split defined in istio-virtualservice.yaml
-- **DestinationRule:** Ensures the request is directed to stable or canary
-
-####  Where is the 90/10 split configured? Where is the routing decision taken
-- The 90/10 split defined in istio-virtualservice.yaml, from Values.istio.canary.weight. 90% stable, 10% canary
-
-#### Sticky Sessions
-- Sticky sessions ensure that once a user is routed to a specific version (stable or canary), they continue to see that version on subsequent requests.
-- 1. The first request is routed based on the configured weights (90/10)
-- 2. A cookie is set (`user-experiment`) to  identify the selected subset
-- 3. Subsequent requests from the same user are then routed to the same subset
-- 4. By default the Cookie TTL is 30 minutes
-
-**Configuration in `values.yaml`:**
-- `istio.canary.cookieName` - Name of the sticky session cookie
-- `istio.canary.cookieTtl` - Cookie time-to-live
-
-
-#### Verification
-
-```bash
-kubectl get gateway,virtualservice,destinationrule
-kubectl get pods -l app=app-service --show-labels
-```
-
-- Test Normal Request
-```bash
-curl -v http://sms.local/sms
-```
-
-- Test Sticky Sessions
-```bash
-# First request (saves cookie)
-curl -i -c cookies.txt http://sms.local/sms
-
-# Subsequent requests (should hit same version)
-curl -i -b cookies.txt http://sms.local/sms
-```
-
-### Additional Use Case - Rate Limiting
-The additional use case of rate limiting incoming requests was chosen for our project. Global rate limiting is implemented using **Istio + Envoy** and uses **Redis** to store the rate limit state across the cluster. It is evaluated at the Istio IngressGateway **before** canary routing and sticky session logic are applied.
-
-Implemented in: `operation/helm_chart/templates/ratelimit-backend.yml`, `operation/helm_chart/templates/ratelimit-configmap.yml`, `operation/helm_chart/templates/istio-global-ratelimit-filter.yml`
-
-### How rate limiting works
-1. A client sends a request to the application via the Istio IngressGateway.
-2. Envoy extracts the `x-user-id` HTTP header from the request.
-3. Envoy synchronously queries the Rate Limit Service via gRPC.
-4. Redis is used to check whether the request exceeds the allowed quota.
-5. Decision:
-   * If allowed → request proceeds to normal routing (VirtualService / DestinationRule).
-   * If exceeded → Envoy immediately returns **HTTP 429 (Too Many Requests)**.
-
-Rate limiting is therefore **global, centralized, and enforced at ingress**.
-
-**Important:** If the `x-user-id` header is not provided, all such requests are grouped under the same rate-limit bucket.
-
-### Rate limit policy
-The rate limit policy is defined via `values.yaml` and rendered into a ConfigMap:
-* **10 requests per minute**
-* **per user**, identified by the `x-user-id` request header
-* **cluster-wide**, across all pods and replicas
-
-### Verification
-- Allowed requests:
-```bash
-curl -i http://sms.local/sms -H "x-user-id: alice"
-```
-Expected response: **HTTP 200**
-
-- Exceed rate limit:
-```bash
-for i in {1..11}; do
-  curl -i http://sms.local/sms -H "x-user-id: alice"
-done
-```
-Expected response: **HTTP 429**
-
-- Different user (separate quota):
-```bash
-curl -i http://sms.local/sms -H "x-user-id: bob"
-```
-Expected response: **HTTP 200**
