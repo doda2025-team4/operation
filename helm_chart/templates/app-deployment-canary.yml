@@ -28,7 +28,7 @@ spec:
                   key: SERVER_PORT
 
             - name: MODEL_HOST
-              value: "http://model-service:{{ .Values.model.env.port }}"
+              value: "{{ .Values.app.env.modelHost }}:{{ .Values.model.env.port }}"
 
           ports:
             - containerPort: {{ .Values.app.env.serverPort }}
