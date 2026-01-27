@@ -147,7 +147,7 @@
   - In `operation`: [PR 58](https://github.com/doda2025-team4/operation/pull/58).
   - I have made final updates to A2 mostly relating to the package versions of steps 9 and 10
   - In `operation`: [PR 59](https://github.com/doda2025-team4/operation/pull/59).
-  - I have addeed additional documentation regarding sticky sessions and verifications to match previous weeks
+  - I have added additional documentation regarding sticky sessions and verifications to match previous weeks
 
 - Poyraz:
   - Changed the rate limiting to per user based on header id. Also looked into other ways of doing it but I could only think of doing it based on JWT auth which I dont know if it is in the scope of the assignment. It might be better to get clarification on what needs to be done in order to get the per user requirement. [PR 64](https://github.com/doda2025-team4/operation/pull/64).
@@ -178,6 +178,10 @@
   - Fixed inventory.cfg to use VM IPs instead of localhost addresses for proper Ansible provisioning. [PR 48](https://github.com/doda2025-team4/operation/pull/48)
 
 ### Week Q2.9 (Jan 19+)
+- Joshua:
+  - In `operation`: [PR 72](https://github.com/doda2025-team4/operation/pull/72).
+  - I have added documentation in a consistent format covering all assignments containing implementation details and verification for each step, and verified the full functionality of all features.
+
 - Kasper:
   - I have implemented working email alerts using the Prometheus Alertmanager in `operation`: [PR 74](https://github.com/doda2025-team4/operation/pull/74).
 
