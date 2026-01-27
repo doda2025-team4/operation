@@ -47,6 +47,10 @@ model:
   service:
     type: ClusterIP
     port: 8081
+  storage:
+    enabled: true
+    stableHostPath: "/mnt/shared/model-stable"
+    canaryHostPath: "/mnt/shared/model-canary"
 
 smtpSecret:
   create: false
