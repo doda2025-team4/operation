@@ -108,7 +108,8 @@ It is not deployed independently; instead, it is bundled into the frontend conta
 ## Deployed Resources Overview
 
 The deployment consists of the following Kubernetes and Istio resources:
-- **Istio IngressGateway**: Entry point for all external HTTP traffic into the cluster.
+- **Kubernetes Ingress (Nginx)**: stable-only external entrypoint pointing to app-service-stable.
+- **Istio IngressGateway**: Entry point for external HTTP traffic related to stable/canary experiment.
 - **Istio Gateway**: Binds the IngressGateway to the application hostname and port.
 - **Istio VirtualService**: Defines request routing rules, including the 90/10 canary split.
 - **Istio DestinationRule**: Defines stable and canary subsets and sticky-session behavior.
@@ -136,30 +137,38 @@ Include:
 
 ---
 
-## External Access: Entry Point Definition
+## External Access: Entry Points
 
-The application exposes a single external HTTP entry point:
-- **Hostname:** `sms.local`
-- **Port:** `80`
+The application exposes two HTTP entry points:
+
+### 1 Stable-only baseline (Nginx Ingress)
+- **Hostname:** `sms-nginx.local`
 - **Path:** `/sms`
-- **Headers:**
-  - none required for normal usage
-  - `x-user-id` used only for rate limiting
+- **Purpose:** Always routes to the **stable** version
 
-All external traffic enters through the Istio IngressGateway.
+### 2 Canary experiment (Istio IngressGateway)
+- **Hostname:** `sms.local`
+- **Path:** `/sms`
+- **Purpose:** Routes through **Istio** (90/10 split + sticky sessions + rate limiting)
+- **Header:** `x-user-id` is used only for rate limiting
+
 
 ---
 
 ## Request Flow Through the Deployment
 
-### Typical Request Path
-
+### Experiment request path (Istio)
 1. A client sends a request to `http://sms.local/sms`.
 2. The request enters the cluster via the **Istio IngressGateway**.
 3. Global rate limiting is evaluated at the gateway.
 4. Istio routing rules determine whether the request is sent to the stable or canary frontend.
-5. The frontend forwards the SMS to the backend model service.
+5. The frontend forwards the SMS to the backend model service keeping the version context (stable -> stable and canary -> canary).
 6. The classification result flows back to the client.
+
+### Baseline request path (Nginx, stable-only)
+1. A client sends a request to `http://sms-nginx.local/sms`.
+2. The request enters the cluster via **Nginx Ingress** and is forwarded directly to the **stable** frontend.
+3. The frontend forwards the SMS to the backend model service and returns the response.
 
 ---
 
