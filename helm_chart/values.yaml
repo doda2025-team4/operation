@@ -63,7 +63,7 @@ alerting:
   enabled: true
   configName: email-config
   email:
-    to: "solarct1@gmail.com" # change to your email
+    to: "changeme@please.com" # change to your email
     from: "doda.team4.alerts@gmail.com"
     smarthost: "smtp.gmail.com:587"
     username: "doda.team4.alerts@gmail.com"
