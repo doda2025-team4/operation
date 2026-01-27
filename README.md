@@ -1,5 +1,6 @@
 All repositories belonging to this project are available here:
 
+- **operation:** https://github.com/doda2025-team4/operation
 - **app:** https://github.com/doda2025-team4/app
 - **app (canary):** https://github.com/doda2025-team4/app/tree/canary
 - **model-service:** https://github.com/doda2025-team4/model-service
