@@ -181,3 +181,33 @@
 - Joshua:
   - In `operation`: [PR 72](https://github.com/doda2025-team4/operation/pull/72).
   - I have added documentation in a consistent format covering all assignments containing implementation details and verification for each step, and verified the full functionality of all features.
+
+- Kasper:
+  - I have implemented working email alerts using the Prometheus Alertmanager in `operation`: [PR 74](https://github.com/doda2025-team4/operation/pull/74).
+
+- Poyraz:
+  - I have worked on the deployment.md file which is a seperate document with high level details and no assignment specific testing or verification content. [PR 77](https://github.com/doda2025-team4/operation/pull/77).
+
+- Andrea:
+  - I have worked on writing the final extension proposal for A4 in [PR 79](https://github.com/doda2025-team4/operation/pull/79)
+
+- Mohammed:
+  - Removed hardcoded SMTP password from Helm chart and updated README with manual secret creation instructions for A3 in [PR 80](https://github.com/doda2025-team4/operation/pull/80).
+ 
+- Noky:
+  - I have written the part for continuous experimentation in [PR 78](https://github.com/doda2025-team4/operation/pull/78)
+  - I started working on the presentation slides
+ 
+### Week Q2.10 (Jan 26+)
+- Mohammed:
+  - I added Mermaid diagrams to docs/deployment.md for A4 visualization in [PR 81](https://github.com/doda2025-team4/operation/pull/81).
+
+- Kasper:
+  - I have fixed an issue where the alertmanager sent an alert of an error that we were not expecting. This error is fixed in [PR 84](https://github.com/doda2025-team4/operation/pull/84).
+ 
+- Noky:
+  - I have moved more variables in from the templates to the values.yml file [PR 91](https://github.com/doda2025-team4/operation/pull/91)
+  - I have finished my presentation slides
+
+- Andrea:
+  - I have worked on my presentation slides, implemented virtualbox shared storage in [PR 83](https://github.com/doda2025-team4/operation/pull/83), implemented missing parts for the alert secrets in [PR 87](https://github.com/doda2025-team4/operation/pull/87), implemented missing nginx ingress in [PR 92](https://github.com/doda2025-team4/operation/pull/92).

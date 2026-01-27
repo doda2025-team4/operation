@@ -7,12 +7,19 @@ app:
   canary:
     enabled: true
     replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team4/app
+      tag: "v0.4.0-canary.2"
+      pullPolicy: IfNotPresent
   hostname: "dodateam4-app"
   env:
+    modelHost: "http://model-service"
     serverPort: 8080
   service:
     type: ClusterIP
     port: 8080
+    monitoring:
+      interval: 5s
 
 model:
   image:
@@ -20,36 +27,86 @@ model:
     tag: "latest"
     pullPolicy: IfNotPresent
   replicaCount: 1
+  canary:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: ghcr.io/doda2025-team4/model-service
+      tag: "v1.3.0-canary.1"
+      pullPolicy: IfNotPresent
+    env:
+      modelURL: "https://github.com/doda2025-team4/model-service/releases/download/v1.3.0-canary.1/model.joblib"
+      preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/v1.3.0-canary.1/preprocessor.joblib"
   env:
     port: 8081
     modelDir: "/model-storage"
     modelFile: "model.joblib"
-    preprocessorFile: "preprocesser.joblib"
+    preprocessorFile: "preprocessor.joblib"
     modelURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/model.joblib"
     preprocessorURL: "https://github.com/doda2025-team4/model-service/releases/download/model-20251211-135427/preprocessor.joblib"
   service:
     type: ClusterIP
     port: 8081
+  storage:
+    enabled: true
+    stableHostPath: "/mnt/shared/model-stable"
+    canaryHostPath: "/mnt/shared/model-canary"
+
+smtpSecret:
+  create: false
+  name: alertmanager-smtp
+  smtpPassword: ""
+  key: SMTP_PASSWORD
 
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: "nginx"
   hosts:
-    - host: "CHANGE-ME.example.com"
+    - host: "sms-nginx.local"
       path: /
   tls: []
 
 alerting:
   enabled: true
-  alertmanagerImage: "quay.io/prometheus/alertmanager:v0.27.0"
-  smtp:
-    host: "smtp.gmail.com:587"
-    username: "temp@tempmail.com"
-    # password is stored in secret-config Secret as SMTP_PASSWORD
-    from: "placeholder@tempmail.com"
-    to: "placeholder@tempmail.com"
+  configName: email-config
+  email:
+    to: "changeme@please.com" # change to your email
+    from: "doda.team4.alerts@gmail.com"
+    smarthost: "smtp.gmail.com:587"
+    username: "doda.team4.alerts@gmail.com"
+    sendResolved: true
+  route:
+    groupBy: ["namespace", "alertname"]
+    groupWait: 5s
+    groupInterval: 1m
+    repeatInterval: 5m
+
 monitoring:
   enabled: true
+  
+  alertmanager:
+    enabled: true # check if needed
+    alertmanagerSpec:
+      alertmanagerConfigSelector:
+        matchLabels:
+          alertmanagerConfig: sms-app
+      alertmanagerConfigNamespaceSelector: {}
+    config:
+      route:
+        receiver: "null"
+      receivers:
+        - name: "null"
+
+  prometheusOperator:
+    podAnnotations:
+      sidecar.istio.io/inject: "false"
+    admissionWebhooks:
+      patch:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
+      create:
+        podAnnotations:
+          sidecar.istio.io/inject: "false"
 
 istio:
   enabled: true
@@ -63,18 +120,18 @@ istio:
     domain: sms-ratelimit
     requestsPerUnit: 10
     unit: minute
+    timeout: 10s
 
   gateway:
     name: sms-gateway
 
   hosts:
     stable: "sms.local"
-    preview: "sms-preview.local"
 
   canary:
     weight: 10
     cookieName: "user-experiment"
-    cookieTtl: "30m"
+    cookieMaxAgeSeconds: 1800
   grafana:
     sidecar:
       dashboards:
@@ -83,3 +140,15 @@ istio:
         labelValue: "1"
         searchNamespace: ALL
 
+ratelimiting:
+  service:
+    ports:
+      http: 8080
+      httpTarget: 8080
+      grpc: 8081
+      grpcTarget: 8081
+      httpDebug: 6070
+      httpDebugTarget: 6070
+
+  deployment:
+    replicas: 1

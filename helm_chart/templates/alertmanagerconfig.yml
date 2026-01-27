@@ -1,0 +1,34 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.alertmanager.enabled .Values.alerting.enabled }}
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ .Values.alerting.configName | default "email-config" | quote }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    alertmanagerConfig: sms-app
+spec:
+  route:
+    receiver: "null"
+    groupBy: {{ toJson .Values.alerting.route.groupBy }}
+    groupWait: {{ .Values.alerting.route.groupWait }}
+    groupInterval: {{ .Values.alerting.route.groupInterval }}
+    repeatInterval: {{ .Values.alerting.route.repeatInterval }}
+    routes:
+      - receiver: email-alert
+        matchers:
+          - name: namespace
+            matchType: "="
+            value: {{ .Release.Namespace | quote }}
+  receivers:
+    - name: "null"
+    - name: email-alert
+      emailConfigs:
+        - to: {{ .Values.alerting.email.to | quote }}
+          from: {{ .Values.alerting.email.from | quote }}
+          smarthost: {{ .Values.alerting.email.smarthost | quote }}
+          authUsername: {{ .Values.alerting.email.username | quote }}
+          authPassword:
+            name: {{ .Values.smtpSecret.name | quote }}
+            key: {{ .Values.smtpSecret.key | default "SMTP_PASSWORD" | quote }}
+          sendResolved: {{ .Values.alerting.email.sendResolved }}
+{{- end }}

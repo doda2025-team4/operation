@@ -16,7 +16,7 @@
 
     # Step 5
     - name: Disable swap at runtime
-      ansible.builtin.shell: swapoff -a
+      ansible.builtin.command: swapoff -a
 
     - name: Remove swap from /etc/fstab
       ansible.builtin.lineinfile:
@@ -132,3 +132,14 @@
         name: kubelet
         state: started
         enabled: yes
+
+    # Fix ntp alert
+    - name: Set ntp
+      ansible.builtin.command: timedatectl set-ntp true
+    
+    - name: Enable ntp
+      ansible.builtin.service:
+        name: systemd-timesyncd
+        state: started
+        enabled: yes
+

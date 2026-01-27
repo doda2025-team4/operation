@@ -4,9 +4,16 @@ kind: Ingress
 metadata:
   name: app-ingress
 spec:
-  defaultBackend:
-    service:
-      name: app-service
-      port:
-        number: 8080
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  rules:
+    - host: {{ (index .Values.ingress.hosts 0).host | quote }}
+      http:
+        paths:
+          - path: {{ (index .Values.ingress.hosts 0).path | quote }}
+            pathType: Prefix
+            backend:
+              service:
+                name: app-service-stable
+                port:
+                  number: {{ .Values.app.service.port }}
 {{- end }}

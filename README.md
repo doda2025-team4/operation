@@ -244,13 +244,6 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    export KUBECONFIG=YOUR_PATH
    ```
 
-3. **Install the Helm chart:**
-   ```bash
-   cd helm_chart
-   helm dependency update .
-   kubectl create namespace doda
-   helm install sms-app . -n doda
-   ```
 
 ##### Option 2: Deploy to Minikube
 
@@ -269,18 +262,78 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    cd ..
    ```
 
-3. **Install the Helm chart:**
+#### Configure local DNS (/etc/hosts)
+We expose two endpoints:
+- `sms.local` → Istio IngressGateway (canary experiment: 90/10 + sticky + rate limit)
+- `sms-nginx.local` → Nginx Ingress (stable-only)
+#### Vagrant (VM) cluster
+```bash
+export ISTIO_IP=$(kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export NGINX_IP=$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+sudo sh -c "sed -i.bak '/ sms.local\$/d; / sms-nginx.local\$/d' /etc/hosts; \
+printf '\n# DODA Team4\n%s sms.local\n%s sms-nginx.local\n' \"$ISTIO_IP\" \"$NGINX_IP\" >> /etc/hosts"
+```
+#### Minikube cluster
+Keep `minikube tunnel` running in a separate terminal.
+```bash
+export ISTIO_IP=$(kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export NGINX_IP=$(minikube ip)
+sudo sh -c "sed -i.bak '/ sms.local\$/d; / sms-nginx.local\$/d' /etc/hosts; \
+printf '\n# DODA Team4 (minikube)\n%s sms.local\n%s sms-nginx.local\n' \"$ISTIO_IP\" \"$NGINX_IP\" >> /etc/hosts"
+```
+
+Once you have your Kubernetes cluster ready (either Vagrant or Minikube), proceed with the following steps to deploy the application:
+
+3. **Create the SMTP password secret:**
+   ```bash
+   kubectl create namespace doda
+   kubectl -n doda create secret generic alertmanager-smtp --from-literal=SMTP_PASSWORD="ybsuczpfonhkunqy"
+   ```
+
+    Alternative option: let Helm **generate the Secret** by setting `smtpSecret.create=true` and providing the password at install/upgrade by adding the following to the `helm install` command:
+    ```bash
+    --set smtpSecret.create=true --set smtpSecret.smtpPassword='ybsuczpfonhkunqy'
+    ```
+
+4. **Enable Istio sidecar injection for the namespace:**
+   ```bash
+   kubectl label namespace doda istio-injection=enabled --overwrite
+   ```
+
+5. **Install the Helm chart:**
    ```bash
    cd helm_chart
    helm dependency update .
-   kubectl create namespace doda
+   helm install sms-app . -n doda
+   ```
 
+**Shared VirtualBox Storage**  
+  All VMs mount the same VirtualBox shared folder as `/mnt/shared`. The Helm chart mounts this path into the model-service as a `hostPath` volume so model artifacts persist across pod restarts and across nodes. Stable and canary use separate subdirectories (`/mnt/shared/model-stable` and `/mnt/shared/model-canary`) to avoid overwriting `model.joblib` / `preprocessor.joblib`.  
+  Verification:  
+  - Provision the VMs.  
+  - On **each VM** verify the shared folder is mounted:
+    - `mount | grep /mnt/shared`
+    - `ls -la /mnt/shared`
+
+  - Verify that model pods mount the volume:
+    - `kubectl -n doda describe deploy model-deployment | sed -n '/Mounts:/,/Conditions:/p'`
+    - `kubectl -n doda describe deploy model-deployment-canary | sed -n '/Mounts:/,/Conditions:/p'`
+
+  - Verify stable model downloads on first start (should say **Downloading**):
+    - `kubectl -n doda logs deploy/model-deployment -c model-container | egrep "\[model-service\] (Downloading|Using existing)"`
+
+  - Scale stable model to create a second pod on another node:
+    - `kubectl -n doda scale deploy/model-deployment --replicas=2`
+    - `kubectl -n doda get pods -l app=model-service -o wide`
+
+  - Verify the **new** stable pod reuses the existing artifacts (should show **Using existing** instead of **Downloading**):
+    - `kubectl -n doda logs <NEW_STABLE_POD_NAME> -c model-container | egrep "\[model-service\] (Downloading|Using existing)"`
 
 #### Prometheus
 - **Custom Prometheus Metrics**  
   App service exposes metrics at `/metrics` endpoint. Metrics are defined in in `app/src/main/java/com/team04/app/MetricsConfig.java`: `sms_active_requests` (Gauge), `sms_predictions_total` (Counter), `sms_prediction_latency` (Histogram).  
   Verification:  
-  - Check metrics: `curl http://localhost:8080/metrics
+  - Check metrics: `curl http://sms.local/metrics`
 
 
 - **Prometheus Monitoring**  
@@ -289,9 +342,8 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
   - Check pods:
     - `kubectl get pods -n doda`
 
-  - Port-forward the app and generate metrics:
-    - `kubectl port-forward svc/app-service 8080:8080 -n doda`
-    - `curl -X POST http://localhost:8080/sms \
+  - Generate metrics:
+    - `curl -X POST http://sms.local/sms \
       -H "Content-Type: application/json" \
       -d '{"sms":"hello"}'`
     - (repeat the request a few times to increase counters)
@@ -328,12 +380,25 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
     - **Password:** retrieved from the command above
 
   - Verify application metrics in Grafana:
-    - Port-forward the app service:
-      - `kubectl port-forward svc/app-service 8080:8080 -n doda`
     - Open the application UI:
-      - Navigate to `http://localhost:8080/sms`
+      - Navigate to `http://sms-nginx.local/sms`
     - Send a few SMS prediction requests to generate traffic
     - In Grafana, open one of the dashboards and verify that the graphs update accordingly
+
+#### Alerting
+
+View the alertmanager:
+  - Port-forward the alertmanager:
+    - `kubectl port-forward svc/sms-app-monitoring-alertmanager 9093:9093 -n doda`
+  - Open the UI:
+    - Navigate to `http://localhost:9093/`
+
+To receive an alert:
+  - Replace `replace@me.please` in `values.yml` with the email address you want to receive the alert on
+  - Update the helm install
+  - Submit more than or equal to 10 sms prediction requests in the application in a minute
+  - Wait a few seconds
+  - You should now have received an email
 
 ### A4
 
@@ -352,7 +417,7 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
 - **Application Access**  
   Hostname `sms.local` on port 80, path `/sms`. Configured in `helm_chart/values.yaml`.  
   Verification:  
-  - Test: `curl -H "Host: sms.local" http://<INGRESS_IP>/sms/`
+  - Test: `curl -i http://sms.local/sms`
 
 - **Canary Deployment (90/10 Split)**  
   90/10 traffic split configured in `helm_chart/templates/istio-virtualservice.yml` via `istio.canary.weight` in values.yaml. Two deployments: `app-deployment` (stable) and `app-deployment-canary` (canary).  
@@ -362,15 +427,15 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
 - **Sticky Sessions**  
   Cookie-based routing using `user-experiment` cookie (30 minute ttl). First request gets random assignment, then route to same version.  
   Verification:  
-  - Test first request: `curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/`  
-  - Test sticky: `curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/`
+  - Test first request: `curl -i -c cookies.txt http://sms.local/sms`  
+  - Test sticky: `curl -i -b cookies.txt http://sms.local/sms`
 
 - **Rate Limiting**  
   Global rate limiting via Istio, Envoy, Redis. Configured in `helm_chart/templates/ratelimit-backend.yml`, `ratelimit-configmap.yml`, and `istio-global-ratelimit-filter.yml`. Enforced at IngressGateway before routing. 10 requests per minute per user (via `x-user-id` header).
   Verification:  
   - Check policy at `operation/helm_chart/values.yaml`
-  - Test allowed: `curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms`  
-  - Test exceeded: `for i in {1..11}; do curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms; done`  
+  - Test allowed: `curl -i http://sms.local/sms -H "x-user-id: bob"`  
+  - Test exceeded: `for i in {1..11}; do curl -i http://sms.local/sms -H "x-user-id: bob"; done`  
 
 #### Deployment
 The deployment consists of:
@@ -389,10 +454,10 @@ Implemented in: `operation/helm_chart/templates/istio-gateway.yml`, `operation/h
 "ADD DIAGRAM SHOWING SPLIT HERE"
 
 #### Which hostnames/ports/paths/headers/... are required to access your application?
-- **Hostnames:** dodateam4-app, configured via Helm in values.yaml
-- **Port:** By default on port 8080, can be configured for external access
-- **Path:** /sms
-- **Headers:** None headers are required for normal usage
+- **Hostname:** `sms.local` (Istio IngressGateway)
+- **Port:** `80`
+- **Path:** `/sms`
+- **Headers:** none required; `x-user-id` only for rate limiting tests
 
 #### Which path does a typical request take through your deployment?
 - **User Request:** User hits the app via http://sms.local/sms
@@ -424,16 +489,16 @@ kubectl get pods -l app=app-service --show-labels
 
 - Test Normal Request
 ```bash
-curl -v -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -v http://sms.local/sms
 ```
 
 - Test Sticky Sessions
 ```bash
 # First request (saves cookie)
-curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -i -c cookies.txt http://sms.local/sms
 
 # Subsequent requests (should hit same version)
-curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -i -b cookies.txt http://sms.local/sms
 ```
 
 ### Additional Use Case - Rate Limiting
@@ -463,20 +528,20 @@ The rate limit policy is defined via `values.yaml` and rendered into a ConfigMap
 ### Verification
 - Allowed requests:
 ```bash
-curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+curl -i http://sms.local/sms -H "x-user-id: alice"
 ```
 Expected response: **HTTP 200**
 
 - Exceed rate limit:
 ```bash
 for i in {1..11}; do
-  curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+  curl -i http://sms.local/sms -H "x-user-id: alice"
 done
 ```
 Expected response: **HTTP 429**
 
 - Different user (separate quota):
 ```bash
-curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms
+curl -i http://sms.local/sms -H "x-user-id: bob"
 ```
 Expected response: **HTTP 200**

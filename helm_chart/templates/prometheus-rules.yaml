@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: doda-app-alerts
+  labels:
+    release: {{ .Release.Name }}
+spec:
+  groups:
+    - name: app.rules
+      rules:
+        - alert: SmsPredictionIncrease
+          expr: increase(sms_predictions_total[1m]) >= 10
+          for: 0m
+          labels:
+            severity: info
+          annotations:
+            summary: "sms_predictions_total increased by 10 or more in the last minute"
+            description: "sms_predictions_total increased by 10 or more in the last minute"
+

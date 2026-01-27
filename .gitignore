@@ -1,5 +1,7 @@
 .vagrant
 admin.conf
 model-storage/
+shared/
+ansible/inventory.cfg
 helm_chart/Chart.lock
 helm_chart/charts/

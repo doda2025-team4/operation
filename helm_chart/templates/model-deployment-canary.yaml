@@ -1,53 +1,54 @@
+{{- if and .Values.istio.enabled .Values.model.canary.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: model-deployment
+  name: model-deployment-canary
 spec:
-  replicas: {{ .Values.model.replicaCount }}
+  replicas: {{ .Values.model.canary.replicaCount }}
   selector:
     matchLabels:
       app: model-service
-      version: stable
+      version: canary
   template:
     metadata:
       labels:
         app: model-service
-        version: stable
+        version: canary
     spec:
       containers:
         - name: model-container
-          image: "{{ .Values.model.image.repository }}:{{ .Values.model.image.tag }}"
-          imagePullPolicy: {{ .Values.model.image.pullPolicy }}
+          image: "{{ .Values.model.canary.image.repository }}:{{ .Values.model.canary.image.tag }}"
+          imagePullPolicy: {{ .Values.model.canary.image.pullPolicy }}
           env:
             - name: MODEL_SERVICE_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: environment-config
+                  name: environment-config-model-canary
                   key: MODEL_SERVICE_PORT
             - name: MODEL_DIR
               valueFrom:
                   configMapKeyRef:
-                    name: environment-config
+                    name: environment-config-model-canary
                     key: MODEL_DIR
             - name: MODEL_FILE
               valueFrom:
                 configMapKeyRef:
-                  name: environment-config
+                  name: environment-config-model-canary
                   key: MODEL_FILE
             - name: PREPROCESSOR_FILE
               valueFrom:
                 configMapKeyRef:
-                  name: environment-config
+                  name: environment-config-model-canary
                   key: PREPROCESSOR_FILE
             - name: MODEL_URL
               valueFrom:
                   configMapKeyRef:
-                    name: environment-config
+                    name: environment-config-model-canary
                     key: MODEL_URL
             - name: PREPROCESSOR_URL
               valueFrom:
                 configMapKeyRef:
-                  name: environment-config
+                  name: environment-config-model-canary
                   key: PREPROCESSOR_URL
           ports:
             - containerPort: {{ .Values.model.env.port }}
@@ -56,12 +57,14 @@ spec:
             - name: model-storage
               mountPath: {{ .Values.model.env.modelDir }}
           {{- end }}
-
+      
       {{- if .Values.model.storage.enabled }}
       volumes:
         - name: model-storage
           hostPath:
-            path: {{ .Values.model.storage.stableHostPath | quote }}
+            path: {{ .Values.model.storage.canaryHostPath | quote }}
             type: DirectoryOrCreate
       {{- end }}
 
+
+{{- end }}

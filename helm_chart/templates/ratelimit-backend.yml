@@ -31,7 +31,7 @@ kind: Deployment
 metadata:
   name: redis
 spec:
-  replicas: 1
+  replicas: {{.Values.ratelimiting.deployment.replicas}}
   selector:
     matchLabels:
       app: redis
@@ -59,16 +59,16 @@ metadata:
 spec:
   ports:
   - name: http-port
-    port: 8080
-    targetPort: 8080
+    port: {{ .Values.ratelimiting.service.ports.http}}
+    targetPort: {{ .Values.ratelimiting.service.ports.httpTarget}}
     protocol: TCP
   - name: grpc-port
-    port: 8081
-    targetPort: 8081
+    port: {{ .Values.ratelimiting.service.ports.grpc}}
+    targetPort: {{.Values.ratelimiting.service.ports.grpcTarget}}
     protocol: TCP
   - name: http-debug
-    port: 6070
-    targetPort: 6070
+    port: {{.Values.ratelimiting.service.ports.httpDebug}}
+    targetPort: {{.Values.ratelimiting.service.ports.httpDebugTarget}}
     protocol: TCP
   selector:
     app: ratelimit
@@ -116,9 +116,9 @@ spec:
         - name: GRPC_HOST
           value: "::"
         ports:
-        - containerPort: 8080
-        - containerPort: 8081
-        - containerPort: 6070
+        - containerPort: {{ .Values.ratelimiting.service.ports.httpTarget}}
+        - containerPort: {{ .Values.ratelimiting.service.ports.grpcTarget}}
+        - containerPort: {{ .Values.ratelimiting.service.ports.httpDebugTarget}}
         volumeMounts:
         - name: config-volume
           mountPath: /data/ratelimit/config

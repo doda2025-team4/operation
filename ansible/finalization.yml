@@ -22,21 +22,24 @@
         mode: "0644"
 
     - name: Apply MetalLB CRDs and components
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/metallb/metallb-native-0.14.9.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-    
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/metallb/metallb-native-0.14.9.yml
+        kubeconfig: /home/vagrant/.kube/config
+
     - name: Wait for MetalLB controller to be ready
-      become_user: vagrant
-      command: >
-        kubectl wait -n metallb-system
-        -l app=metallb,component=controller
-        --for=condition=ready pod
-        --timeout=120s
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-      changed_when: false
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: metallb-system
+        label_selectors:
+          - app=metallb
+          - component=controller
+        kubeconfig: /home/vagrant/.kube/config
+        wait: yes
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: 120
 
     - name: Copy MetalLB IPAddressPool manifest
       copy:
@@ -55,16 +58,16 @@
         mode: "0644"
 
     - name: Apply MetalLB IPAddressPool
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/metallb/ipaddresspool.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/metallb/ipaddresspool.yml
+        kubeconfig: /home/vagrant/.kube/config
 
     - name: Apply MetalLB L2Advertisement
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/metallb/l2advertisement.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/metallb/l2advertisement.yml
+        kubeconfig: /home/vagrant/.kube/config
 
   # STEP 21 - Install Nginx Ingress Controller
 
@@ -81,11 +84,17 @@
         create_namespace: true
         update_repo_cache: true
         kubeconfig: /etc/kubernetes/admin.conf
+        wait: true
+        wait_timeout: 300s
         values:
           controller:
             service:
               loadBalancerIP: 192.168.56.90
-  
+
+    - name: Wait additional time for webhook certificates to be fully initialized
+      pause:
+        seconds: 30
+
   # STEP 22 — Kubernetes Dashboard
               
     - name: Add kubernetes-dashboard Helm repository
@@ -119,21 +128,21 @@
         mode: "0644"
 
     - name: Apply Dashboard admin-user RBAC manifest
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/dashboard/admin-user.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-    
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/dashboard/admin-user.yml
+        kubeconfig: /home/vagrant/.kube/config
+
     - name: Copy Dashboard TLS Secret manifest
       copy:
         src: ../k8s/dashboard/dashboard-tls.yml
         dest: /home/vagrant/dashboard/dashboard-tls.yml
 
     - name: Apply Dashboard TLS Secret
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/dashboard/dashboard-tls.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/dashboard/dashboard-tls.yml
+        kubeconfig: /home/vagrant/.kube/config
 
     - name: Copy Dashboard Ingress manifest
       copy:
@@ -144,10 +153,12 @@
         mode: "0644"
 
     - name: Apply Dashboard Ingress manifest
-      become_user: vagrant
-      command: kubectl apply -f /home/vagrant/dashboard/dashboard-ingress.yml
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+      kubernetes.core.k8s:
+        state: present
+        src: /home/vagrant/dashboard/dashboard-ingress.yml
+        kubeconfig: /home/vagrant/.kube/config
+#        wait: true
+#        wait_timeout: 60
 
   # STEP 23 — Istio Installation
 
@@ -186,41 +197,44 @@
         group: vagrant
         mode: "0644"
 
-    - name: Check if Istio is already installed
-      become_user: vagrant
-      command: kubectl get deployment -n istio-system istiod
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
+    - name: Check if Istio is already installed (alternative)
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        namespace: istio-system
+        name: istiod
+        kubeconfig: /home/vagrant/.kube/config
       register: istio_installed
-      failed_when: false
-      changed_when: false
+      #failed_when: false
+      #changed_when: false
 
-    - name: Install Istio using config.yml
+    - name: Install Istio using config.yml (alternative)
       become_user: vagrant
       command: >
         istioctl install -y -f /home/vagrant/istio/config.yml
       environment:
         KUBECONFIG: /home/vagrant/.kube/config
-      when: "'NotFound' in istio_installed.stderr"
+      when: istio_installed is defined and (istio_installed.resources | default([]) | length) == 0
     
     - name: Wait for istiod deployment to be ready
-      become_user: vagrant
-      command: >
-        kubectl wait deployment/istiod
-        -n istio-system
-        --for=condition=available
-        --timeout=180s
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-      changed_when: false
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        name: istiod
+        namespace: istio-system
+        kubeconfig: /home/vagrant/.kube/config
+        wait: yes
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 180
 
     - name: Wait for istio-ingressgateway to be ready
-      become_user: vagrant
-      command: >
-        kubectl wait deployment/istio-ingressgateway
-        -n istio-system
-        --for=condition=available
-        --timeout=180s
-      environment:
-        KUBECONFIG: /home/vagrant/.kube/config
-      changed_when: false
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        name: istio-ingressgateway
+        namespace: istio-system
+        kubeconfig: /home/vagrant/.kube/config
+        wait: yes
+        wait_condition:
+          type: Available
+          status: "True"
+        wait_timeout: 180

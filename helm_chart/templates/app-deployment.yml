@@ -18,7 +18,8 @@ spec:
       hostname: {{ .Values.app.hostname }}
       containers:
         - name: app-container
-          image: ghcr.io/doda2025-team4/app:latest
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           env:
             - name: SERVER_PORT
               valueFrom:
@@ -27,7 +28,7 @@ spec:
                   key: SERVER_PORT
 
             - name: MODEL_HOST
-              value: "http://model-service:{{ .Values.model.env.port }}"
+              value: "{{.Values.app.env.modelHost}}:{{ .Values.model.env.port }}"
 
           ports:
             - containerPort: {{ .Values.app.env.serverPort }}
