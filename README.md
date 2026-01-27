@@ -262,6 +262,26 @@ put the absolute path to your kubeconfig file in place of YOUR_PATH
    cd ..
    ```
 
+#### Configure local DNS (/etc/hosts)
+We expose two endpoints:
+- `sms.local` → Istio IngressGateway (canary experiment: 90/10 + sticky + rate limit)
+- `sms-nginx.local` → Nginx Ingress (stable-only)
+#### Vagrant (VM) cluster
+```bash
+export ISTIO_IP=$(kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export NGINX_IP=$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+sudo sh -c "sed -i.bak '/ sms.local\$/d; / sms-nginx.local\$/d' /etc/hosts; \
+printf '\n# DODA Team4\n%s sms.local\n%s sms-nginx.local\n' \"$ISTIO_IP\" \"$NGINX_IP\" >> /etc/hosts"
+```
+#### Minikube cluster
+Keep `minikube tunnel` running in a separate terminal.
+```bash
+export ISTIO_IP=$(kubectl -n istio-system get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export NGINX_IP=$(minikube ip)
+sudo sh -c "sed -i.bak '/ sms.local\$/d; / sms-nginx.local\$/d' /etc/hosts; \
+printf '\n# DODA Team4 (minikube)\n%s sms.local\n%s sms-nginx.local\n' \"$ISTIO_IP\" \"$NGINX_IP\" >> /etc/hosts"
+```
+
 Once you have your Kubernetes cluster ready (either Vagrant or Minikube), proceed with the following steps to deploy the application:
 
 3. **Create the SMTP password secret:**
@@ -313,7 +333,7 @@ Once you have your Kubernetes cluster ready (either Vagrant or Minikube), procee
 - **Custom Prometheus Metrics**  
   App service exposes metrics at `/metrics` endpoint. Metrics are defined in in `app/src/main/java/com/team04/app/MetricsConfig.java`: `sms_active_requests` (Gauge), `sms_predictions_total` (Counter), `sms_prediction_latency` (Histogram).  
   Verification:  
-  - Check metrics: `curl http://localhost:8080/metrics
+  - Check metrics: `curl http://sms.local/metrics`
 
 
 - **Prometheus Monitoring**  
@@ -322,9 +342,8 @@ Once you have your Kubernetes cluster ready (either Vagrant or Minikube), procee
   - Check pods:
     - `kubectl get pods -n doda`
 
-  - Port-forward the app and generate metrics:
-    - `kubectl port-forward svc/app-service 8080:8080 -n doda`
-    - `curl -X POST http://localhost:8080/sms \
+  - Generate metrics:
+    - `curl -X POST http://sms.local/sms \
       -H "Content-Type: application/json" \
       -d '{"sms":"hello"}'`
     - (repeat the request a few times to increase counters)
@@ -361,10 +380,8 @@ Once you have your Kubernetes cluster ready (either Vagrant or Minikube), procee
     - **Password:** retrieved from the command above
 
   - Verify application metrics in Grafana:
-    - Port-forward the app service:
-      - `kubectl port-forward svc/app-service 8080:8080 -n doda`
     - Open the application UI:
-      - Navigate to `http://localhost:8080/sms`
+      - Navigate to `http://sms-nginx.local/sms`
     - Send a few SMS prediction requests to generate traffic
     - In Grafana, open one of the dashboards and verify that the graphs update accordingly
 
@@ -400,7 +417,7 @@ To receive an alert:
 - **Application Access**  
   Hostname `sms.local` on port 80, path `/sms`. Configured in `helm_chart/values.yaml`.  
   Verification:  
-  - Test: `curl -H "Host: sms.local" http://<INGRESS_IP>/sms/`
+  - Test: `curl -i http://sms.local/sms`
 
 - **Canary Deployment (90/10 Split)**  
   90/10 traffic split configured in `helm_chart/templates/istio-virtualservice.yml` via `istio.canary.weight` in values.yaml. Two deployments: `app-deployment` (stable) and `app-deployment-canary` (canary).  
@@ -410,15 +427,15 @@ To receive an alert:
 - **Sticky Sessions**  
   Cookie-based routing using `user-experiment` cookie (30 minute ttl). First request gets random assignment, then route to same version.  
   Verification:  
-  - Test first request: `curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/`  
-  - Test sticky: `curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/`
+  - Test first request: `curl -i -c cookies.txt http://sms.local/sms`  
+  - Test sticky: `curl -i -b cookies.txt http://sms.local/sms`
 
 - **Rate Limiting**  
   Global rate limiting via Istio, Envoy, Redis. Configured in `helm_chart/templates/ratelimit-backend.yml`, `ratelimit-configmap.yml`, and `istio-global-ratelimit-filter.yml`. Enforced at IngressGateway before routing. 10 requests per minute per user (via `x-user-id` header).
   Verification:  
   - Check policy at `operation/helm_chart/values.yaml`
-  - Test allowed: `curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms`  
-  - Test exceeded: `for i in {1..11}; do curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms; done`  
+  - Test allowed: `curl -i http://sms.local/sms -H "x-user-id: bob"`  
+  - Test exceeded: `for i in {1..11}; do curl -i http://sms.local/sms -H "x-user-id: bob"; done`  
 
 #### Deployment
 The deployment consists of:
@@ -437,10 +454,10 @@ Implemented in: `operation/helm_chart/templates/istio-gateway.yml`, `operation/h
 "ADD DIAGRAM SHOWING SPLIT HERE"
 
 #### Which hostnames/ports/paths/headers/... are required to access your application?
-- **Hostnames:** dodateam4-app, configured via Helm in values.yaml
-- **Port:** By default on port 8080, can be configured for external access
-- **Path:** /sms
-- **Headers:** None headers are required for normal usage
+- **Hostname:** `sms.local` (Istio IngressGateway)
+- **Port:** `80`
+- **Path:** `/sms`
+- **Headers:** none required; `x-user-id` only for rate limiting tests
 
 #### Which path does a typical request take through your deployment?
 - **User Request:** User hits the app via http://sms.local/sms
@@ -472,16 +489,16 @@ kubectl get pods -l app=app-service --show-labels
 
 - Test Normal Request
 ```bash
-curl -v -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -v http://sms.local/sms
 ```
 
 - Test Sticky Sessions
 ```bash
 # First request (saves cookie)
-curl -c cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -i -c cookies.txt http://sms.local/sms
 
 # Subsequent requests (should hit same version)
-curl -b cookies.txt -H "Host: sms.local" http://<INGRESS_IP>/sms/
+curl -i -b cookies.txt http://sms.local/sms
 ```
 
 ### Additional Use Case - Rate Limiting
@@ -511,20 +528,20 @@ The rate limit policy is defined via `values.yaml` and rendered into a ConfigMap
 ### Verification
 - Allowed requests:
 ```bash
-curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+curl -i http://sms.local/sms -H "x-user-id: alice"
 ```
 Expected response: **HTTP 200**
 
 - Exceed rate limit:
 ```bash
 for i in {1..11}; do
-  curl -H "Host: sms.local" -H "x-user-id: alice" http://<INGRESS_IP>/sms
+  curl -i http://sms.local/sms -H "x-user-id: alice"
 done
 ```
 Expected response: **HTTP 429**
 
 - Different user (separate quota):
 ```bash
-curl -H "Host: sms.local" -H "x-user-id: bob" http://<INGRESS_IP>/sms
+curl -i http://sms.local/sms -H "x-user-id: bob"
 ```
 Expected response: **HTTP 200**

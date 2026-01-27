@@ -59,10 +59,10 @@ smtpSecret:
   key: SMTP_PASSWORD
 
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: "nginx"
   hosts:
-    - host: "CHANGE-ME.example.com"
+    - host: "sms-nginx.local"
       path: /
   tls: []
 
@@ -127,7 +127,6 @@ istio:
 
   hosts:
     stable: "sms.local"
-    preview: "sms-preview.local"
 
   canary:
     weight: 10
