@@ -272,7 +272,7 @@ Once you have your Kubernetes cluster ready (either Vagrant or Minikube), procee
 
     Alternative option: let Helm **generate the Secret** by setting `smtpSecret.create=true` and providing the password at install/upgrade by adding the following to the `helm install` command:
     ```bash
-    --set smtpSecret.create=true --set smtpSecret.smtpPassword='ybsuczpfonhkunqy`
+    --set smtpSecret.create=true --set smtpSecret.smtpPassword='ybsuczpfonhkunqy'
     ```
 
 4. **Enable Istio sidecar injection for the namespace:**
